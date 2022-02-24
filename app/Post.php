@@ -5,9 +5,12 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
+    use SoftDeletes;
+
     protected $guarded = ['id'];
 
     public function getData() {
@@ -20,5 +23,13 @@ class Post extends Model
 
     public function comment() {
         return $this->hasMany('App\Comment');
+    }
+
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(function ($post) {
+            $post->comment()->delete();
+        });
     }
 }

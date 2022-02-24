@@ -13,6 +13,11 @@ class CommentController extends Controller
         $form = $request->all();
         unset($form['_token']);
         $comment->fill($form)->save();
-        return redirect('/post/show?post_id=' . $request->post_id);
+        return redirect(route('post.show',['post_id' => $request->post_id]));
+    }
+
+    public function delete(Request $request) {
+        $comment = Comment::find($request->comment_id);
+        return view('comment.delete',['comment' => $comment]);
     }
 }

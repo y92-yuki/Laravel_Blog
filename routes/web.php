@@ -21,11 +21,12 @@ Auth::routes();
 
 // Route::get('/home', 'HomeController@index')->name('home');
 Route::get('post','PostController@index')->middleware('auth');
-Route::get('/post/add','PostController@add')->middleware('auth');
+Route::get('/post/add','PostController@add')->name('post.add')->middleware('auth');
 Route::post('/post/add','PostController@create');
-Route::get('/post/show','PostController@show')->middleware('auth');
+Route::get('/post/show/{post_id}','PostController@show')->name('post.show')->middleware('auth');
 Route::post('/post/show','CommentController@addComment');
-Route::get('/post/edit','PostController@edit')->middleware('auth');
+Route::get('/post/edit/{post_id}','PostController@edit')->name('post.edit')->middleware('auth');
 Route::post('/post/edit','PostController@update');
-Route::get('/post/delete','PostController@delete')->middleware('auth');
+Route::get('/post/delete/{post_id}','PostController@delete')->name('post.delete')->middleware('auth');
 Route::post('/post/delete','PostController@remove');
+Route::get('/post/show/delete/{comment_id}','CommentController@delete')->name('show.delete')->middleware('auth');

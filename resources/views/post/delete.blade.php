@@ -16,7 +16,7 @@
             @csrf
             <input type="hidden" name="id" value="{{$post->id}}">
             <button type="submit" class="btn btn-danger">削除する</button>
-            <a href="/post/show?post_id={{$post->id}}" class="btn btn-success">戻る</a>
+            <a href="{{ route('post.show',['post_id' => $post->id]) }}" class="btn btn-success">戻る</a>
         </form>
     </div>
 @endsection

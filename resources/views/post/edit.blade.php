@@ -29,7 +29,7 @@
                     </div>
                 </table>
                 <button type="submit" class="btn btn-primary">変更する</button>
-                <a href="/post/show?post_id={{$post->id}}" class="btn btn-success">戻る</a>
+                <a href="{{ route('post.show',['post_id' => $post->id]) }}" class="btn btn-success">戻る</a>
             </div>
         </form>
     </div>

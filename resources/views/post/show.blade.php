@@ -12,8 +12,8 @@
             <tr><th>タイトル</th><td>{{$post->title}}</td></tr>
             <tr><th>内容</th><td>{{$post->message}}</td></tr>
         </table>
-        <a href="/post/edit?post_id={{$post->id}}" class="btn btn-primary">編集</a>
-        <a href="/post/delete?post_id={{$post->id}}" class="btn btn-danger">削除</a>
+        <a href="{{ route('post.edit',['post_id' => $post->id]) }}" class="btn btn-primary">編集</a>
+        <a href="{{ route('post.delete',['post_id' => $post->id]) }}" class="btn btn-danger">削除</a>
         <a href="/post" class="btn btn-success">戻る</a>
 
         <h4 class="my-5">コメントを残す</h4>
@@ -33,21 +33,21 @@
                 <button type="submit" class="btn btn-primary mb-5">コメントする</button>
             </form>
         
-
-            @if ($post->comment)
-                @foreach ($post->comment as $comment)
-                    <div class="card my-2" style="width: 18rem">
-                        <div class="card-body">
-                            <h6 class="card-title">
-                                {{$comment->user->name}}({{$comment->created_at}})
-                            </h6>
-                            <p class="card-text">
-                                {{$comment->message}}
-                            </p>
-                        </div>
+            @forelse ($post->comment as $comment)
+                <div class="card my-2" style="width: 18rem">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            {{$comment->user->name}}({{$comment->created_at}})
+                        </h6>
+                        <p class="card-text">
+                            {{$comment->message}}
+                            <a href="{{ route('show.delete',['comment_id' => $comment->id]) }}" class="float-right btn btn-sm btn-danger">削除</a>
+                        </p>
                     </div>
-                @endforeach
-            @endif
+                </div>
+            @empty
+
+            @endforelse
         </div>
     </div>
 @endsection

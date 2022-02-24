@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Post;
 use App\Comment;
+use App\User;
 use Illuminate\Foundation\Console\Presets\React;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PostRequest;
@@ -12,8 +13,15 @@ use App\Http\Requests\PostRequest;
 class PostController extends Controller
 {
     public function index(Request $request) {
-        $posts = Post::all();
-        return view('post.index',['posts' => $posts]);
+        if (empty($request->search_name)) {
+            $posts = Post::orderBy('id','desc')->paginate(5);
+            return view('post.index',['posts' => $posts]);
+        } else {
+            $search = "%".$request->search_name."%";
+            $user_search = User::where('name',"LIKE",$search)->first();
+            $posts = Post::where('user_id',$user_search->id)->orderBy('id','desc')->paginate(5);
+            return view('post.index',['posts' => $posts,'search' => $search]);
+        }
     }
 
     public function add(React $request) {
