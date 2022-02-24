@@ -30,3 +30,4 @@ Route::post('/post/edit','PostController@update');
 Route::get('/post/delete/{post_id}','PostController@delete')->name('post.delete')->middleware('auth');
 Route::post('/post/delete','PostController@remove');
 Route::get('/post/show/delete/{comment_id}','CommentController@delete')->name('show.delete')->middleware('auth');
+Route::post('/post/show/delete','CommentController@remove');

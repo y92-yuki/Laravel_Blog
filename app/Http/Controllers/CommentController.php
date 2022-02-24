@@ -20,4 +20,11 @@ class CommentController extends Controller
         $comment = Comment::find($request->comment_id);
         return view('comment.delete',['comment' => $comment]);
     }
+
+    public function remove(Request $request) {
+        $comment = Comment::find($request->id);
+        $post_id = $comment->post_id;
+        $comment->delete();
+        return redirect(route('post.show',['post_id' => $post_id]));
+    }
 }
