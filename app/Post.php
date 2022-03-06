@@ -6,15 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class Post extends Model
 {
     use SoftDeletes;
+    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
 
     protected $guarded = ['id'];
+    protected $softCascade = ['comment'];
 
-    public function getData() {
-        return $this->id . ':' . $this->title . '(' . $this->user->name . ')';
+
+    public function getPostIndex() {
+        return $this->id . '.' . Str::limit($this->title,10,'...') . '(' . $this->user->name . ')';
+    }
+
+    public function postExistsLike() {
+        return $this->users()->where('user_id',Auth::id())->exists();
+    }
+
+    public function getPostMessage() {
+        return Str::limit($this->message,20,'...');
     }
 
     public function user() {
@@ -25,11 +38,15 @@ class Post extends Model
         return $this->hasMany('App\Comment');
     }
 
-    public static function boot() {
-        parent::boot();
-
-        static::deleting(function ($post) {
-            $post->comment()->delete();
-        });
+    public function users() {
+        return $this->belongsToMany('App\user')->withTimestamps();
     }
+
+    // public static function boot() {
+    //     parent::boot();
+
+    //     static::deleting(function ($post) {
+    //         $post->comment()->delete();
+    //     });
+    // }
 }

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
+//トップページ
 Route::get('/', function () {
     return view('welcome');
 });
@@ -20,14 +21,37 @@ Route::get('/', function () {
 Auth::routes();
 
 // Route::get('/home', 'HomeController@index')->name('home');
-Route::get('post','PostController@index')->middleware('auth');
+Route::fallback(function() {
+    return redirect('/');
+});
+
+//投稿一覧画面
+Route::get('post','PostController@index')->name('post')->middleware('auth');
+
+//新規投稿画面
 Route::get('/post/add','PostController@add')->name('post.add')->middleware('auth');
 Route::post('/post/add','PostController@create');
+
+//投稿詳細画面
 Route::get('/post/show/{post_id}','PostController@show')->name('post.show')->middleware('auth');
 Route::post('/post/show','CommentController@addComment');
+
+//投稿編集画面
 Route::get('/post/edit/{post_id}','PostController@edit')->name('post.edit')->middleware('auth');
 Route::post('/post/edit','PostController@update');
+
+//投稿削除機能
 Route::get('/post/delete/{post_id}','PostController@delete')->name('post.delete')->middleware('auth');
 Route::post('/post/delete','PostController@remove');
+
+//コメント削除画面
 Route::get('/post/show/delete/{comment_id}','CommentController@delete')->name('show.delete')->middleware('auth');
 Route::post('/post/show/delete','CommentController@remove');
+
+//コメントへのいいね機能
+Route::post('/post/{comment}/like','LikeController@like')->name('like');
+Route::post('/post/{comment}/unlike','LikeController@unlike')->name('unlike');
+
+//投稿へのいいね機能
+Route::post('/post/{post}/postLike','LikeController@postLike')->name('post.Like');
+Route::post('/post/{post}/postUnlike','LikeController@postUnlike')->name('post.Unlike');

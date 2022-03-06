@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Post;
 use App\Comment;
-use App\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Console\Presets\React;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PostRequest;
@@ -13,14 +13,14 @@ use App\Http\Requests\PostRequest;
 class PostController extends Controller
 {
     public function index(Request $request) {
-        if (empty($request->search_name)) {
+        if (empty($request->search_value)) {
             $posts = Post::orderBy('id','desc')->paginate(5);
             return view('post.index',['posts' => $posts]);
         } else {
-            $search = "%".$request->search_name."%";
-            $user_search = User::where('name',"LIKE",$search)->first();
-            $posts = Post::where('user_id',$user_search->id)->orderBy('id','desc')->paginate(5);
-            return view('post.index',['posts' => $posts,'search' => $search]);
+            $search = "%".$request->search_value."%";
+            $posts = Post::where('title','like',$search)->orWhere('message','like',$search)->orderBy('id','desc')->paginate(5);
+            $param = ['posts' => $posts,'search' => $search];
+            return view('post.index',$param);
         }
     }
 
@@ -38,11 +38,7 @@ class PostController extends Controller
 
     public function show(Request $request) {
         $post = Post::find($request->post_id);
-        $date = date('Y年m月d日 H時i分s秒',strtotime($post->created_at));
-        $updated = date('Y年m月d日 H時i分s秒',strtotime($post->updated_at));
-        $auth_id = Auth::id();
-        $param = ['post' => $post,'date' => $date,'updated' => $updated, 'auth_id' => $auth_id];
-        return view('post.show',$param);
+        return view('post.show',['post' => $post]);
     }
 
     public function edit(Request $request) {
@@ -60,14 +56,17 @@ class PostController extends Controller
 
     public function delete(Request $request) {
         $post = Post::find($request->post_id);
-        $date = date('Y年m月d日 H時i分s秒',strtotime($post->created_at));
-        $updated = date('Y年m月d日 H時i分s秒',strtotime($post->updated_at));
-        $param = ['post' => $post, 'date' => $date, 'updated' => $updated];
-        return view('post.delete',$param);
+        return view('post.delete',['post' => $post]);
     }
 
     public function remove(Request $request) {
-        Post::find($request->id)->delete();
+        $post = Post::find($request->id);
+        $comments = Comment::where('post_id',$post->id)->get();
+        foreach ($comments as $comment) {
+            $comment->likes()->detach();
+        }
+        $post->users()->detach();
+        $post->delete();
         return redirect('/post');
     }
 }
