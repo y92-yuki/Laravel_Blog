@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Console\Presets\React;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PostRequest;
+use App\Image as Upload;
+use Image;
 
 class PostController extends Controller
 {
@@ -24,15 +26,36 @@ class PostController extends Controller
         }
     }
 
-    public function add(React $request) {
+    // create
+    public function add(Request $request) {
         return view('post.add',['user_id' => Auth::id()]);
     }
 
+    // store register
     public function create(PostRequest $request) {
         $post = new Post;
-        $form = $request->all();
-        unset($form['_token']);
-        $post->fill($form)->save();
+        // $form = $request->all();
+        // $post_data = $request->only(['hoge', 'hoge']);
+        $post_data = $request->except(['_token']);
+        // unset($form['_token']);
+        $post->fill($post_data)->save();
+
+        if ($request->file) {
+            // unset($form['_token'],$form['file']);
+            // $post->fill($form)->save();
+            
+            $path = $request->file('file')->getClientOriginalName();
+            $save_path = storage_path() . '/app/public/' .$path;
+            $image = Image::make($request->file);
+            $image->resize(600,null,function($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+            $image->save($save_path);
+            Upload::create(['post_id' => $post->id, 'user_id' => Auth::id(), 'path' => $path]);
+        }
+
+
         return redirect('/post');
     }
 
@@ -41,9 +64,12 @@ class PostController extends Controller
         return view('post.show',['post' => $post]);
     }
 
-    public function edit(Request $request) {
-        $post = Post::find($request->post_id);
-        return view('post.edit',['post' => $post]);
+    public function edit(Post $post) {
+        if ($post->user_id == Auth::id()) {
+            return view('post.edit',['post' => $post]);
+        } else {
+            return redirect('/post');
+        }
     }
 
     public function update(PostRequest $request) {
@@ -54,19 +80,34 @@ class PostController extends Controller
         return redirect('/post');
     }
 
-    public function delete(Request $request) {
-        $post = Post::find($request->post_id);
-        return view('post.delete',['post' => $post]);
+    // deleteConfirm
+    public function delete(Post $post, Request $request) {
+        if ($post->user_id == Auth::id()) {
+            return view('post.delete',['post' => $post]);
+        } else {
+            return redirect('/post');
+        }
     }
 
+    // delete
     public function remove(Request $request) {
         $post = Post::find($request->id);
         $comments = Comment::where('post_id',$post->id)->get();
+
+        // transaction
+        // transaction start
+
+        // transaction commit
+
+        // transaction rollback
+
         foreach ($comments as $comment) {
             $comment->likes()->detach();
         }
         $post->users()->detach();
         $post->delete();
+
+
         return redirect('/post');
     }
 }

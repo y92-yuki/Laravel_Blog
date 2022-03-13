@@ -81,7 +81,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    ひと言掲示板
+                    {{ config('app.name') }}
                 </div>
 
                 <div class="links">

@@ -23,19 +23,19 @@
                     </thead>
                 @endif
                 <tr>
-                    <td style="width: 30%;">{{ $post->getPostIndex() }}</td>
+                    <td style="width: 30%;">{{ $post->index_title }}</td>
                     <td class="text-center" style="width: 30%;">{{ $post->getPostMessage() }}</td>
                     <td><a href="{{ route('post.show', ['post_id' => $post->id]) }}" class="btn btn-sm btn-primary">詳細</a></td>
                 </tr>
             </table>
         @empty
-            @if (empty($posts->id) && empty($search))
-                <div class="d-flex align-items-center justify-content-center border-buttom" style="height:300px;">
-                    <h2 style="border-bottom: solid 2px;">まだ投稿がありません</h2>
-                </div>
-            @elseif ($search)
+            @if ($search)
                 <div class="d-flex align-items-center justify-content-center border-buttom" style="height:300px;">
                     <h2 style="border-bottom: solid 2px;">" {{ str_replace('%','',$search) }} " を含む投稿は見つかりませんでした</h2>
+                </div>
+            @else
+                <div class="d-flex align-items-center justify-content-center border-buttom" style="height:300px;">
+                    <h2 style="border-bottom: solid 2px;">まだ投稿がありません</h2>
                 </div>
             @endif
         @endforelse

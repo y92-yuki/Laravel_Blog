@@ -17,9 +17,13 @@ class CommentController extends Controller
         return redirect(route('post.show',['post_id' => $request->post_id]));
     }
 
-    public function delete(Request $request) {
-        $comment = Comment::find($request->comment_id);
-        return view('comment.delete',['comment' => $comment]);
+    public function delete(Comment $comment) {
+        if ($comment->user_id == Auth::id() || $comment->post->user_id == Auth::id()) {
+            return view('comment.delete',['comment' => $comment]);
+        } else {
+            return redirect('/post');
+        }
+        
     }
 
     public function remove(Request $request) {

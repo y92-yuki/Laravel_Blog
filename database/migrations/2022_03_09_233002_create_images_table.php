@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePostUserTable extends Migration
+class CreateImagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,13 @@ class CreatePostUserTable extends Migration
      */
     public function up()
     {
-        // post_likes
-        Schema::create('post_user', function (Blueprint $table) {
+        // post_images
+        Schema::create('images', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('post_id');
             $table->integer('user_id');
+            $table->string('path');
             $table->timestamps();
-
-            $table->unique(['post_id','user_id']);
         });
     }
 
@@ -31,6 +30,6 @@ class CreatePostUserTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('post_user');
+        Schema::dropIfExists('images');
     }
 }

@@ -13,8 +13,10 @@
             <tr><th>タイトル</th><td>{{$post->title}}</td></tr>
             <tr><th>内容</th><td>{!!nl2br($post->message)!!}</td></tr>
         </table>
-        <a href="{{ route('post.edit',['post_id' => $post->id]) }}" class="btn btn-primary">編集</a>
-        <a href="{{ route('post.delete',['post_id' => $post->id]) }}" class="btn btn-danger">削除</a>
+        @if ($post->user_id == Auth::id())
+            <a href="{{ route('post.edit',$post) }}" class="btn btn-primary">編集</a>
+            <a href="{{ route('post.delete', ['post' => $post->id]) }}" class="btn btn-danger">削除</a>
+        @endif
         <a href="/post" class="btn btn-success">戻る</a>
 
         @if ($post->postExistsLike())
@@ -25,9 +27,65 @@
         @else
             <form class="text-right" action="{{ route('post.Like',$post) }}" method="post">
                 @csrf
-                <button type="submit" class="btn btn-primary">いいね</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-regular fas fa-lg fa-thumbs-up"></i> いいね!</button>
             </form>
         @endif
+        @if ($post->user_id == Auth::id())
+            <form action="{{ route('upload',['post_id' => $post->id]) }}" method="post" enctype="multipart/form-data">
+                @csrf
+                <input type="file" name="file" class="form-control-file">
+                <button type="submit" class="my-3 btn btn-sm btn-info">画像を添付する</button>
+            </form>
+            @forelse ($post->images as $image)
+                @if ($image->id)
+                    <div class="float-right">
+                        <button type="submit" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#imageRemoveModal" data-backdrop="static">画像を削除する</button>
+                    </div>
+                    @break
+                @else
+                
+                @endif
+            
+            @empty
+
+            @endforelse
+        @endif
+
+        {{-- モーダルウィンドウで画像を削除 --}}
+        <div class="modal fade" id="imageRemoveModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" area-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4><div class="modal-title" id="myModalLabel">削除確認画面</div></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('upload.delete',['post_id' => $post->id]) }}" method="post">
+                            @csrf
+                            削除する画像を選択してください
+                            <div class="form-group">
+                                <select name="image_id" class="form-control">
+                                    @foreach ($post->images as $image)
+                                        <option value="{{ $image->id }}">{{ $image->path }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn default" data-dismiss="modal">閉じる</button>
+                                <button type="submit" class="btn btn-danger">削除</button>
+                            </div>
+                        </form>
+                    </div>  
+                </div>
+            </div>
+        </div>
+        
+        @if ($post->user_id == Auth::id())
+            
+        @endif
+
+        @foreach ($post->images as $image)
+            <img src="{{ asset('storage/' . $image->path) }}" class="mb-2">
+        @endforeach
 
         <h4 class="my-5">コメントを残す</h4>
         <div class="col-5">
@@ -59,14 +117,16 @@
                             @else
                                 <form action="{{ route('like',$comment) }}" method="post">
                                     @csrf
-                                    <button type="submit" class="float-right btn btn-primary btn-sm">いいね</button>
+                                    <button type="submit" class="float-right btn btn-primary btn-sm"><i class="fa-regular fas fa-thumbs-up"> いいね！</i></button>
                                 </form>
                             @endif
-                            <p>いいね数:{{ $comment->likes->count() }}</p>
+                            <p>いいねの数:{{ $comment->likes->count() }}</p>
                         </h6>
                         <p class="card-text">
                             {{$comment->message}}
-                            <a href="{{ route('show.delete',['comment_id' => $comment->id]) }}" class="mt-1 float-right btn btn-sm btn-danger">削除</a>
+                            @if ($comment->user_id == Auth::id() || $post->user_id == Auth::id())
+                                <a href="{{ route('show.delete',$comment) }}" class="mt-1 float-right btn btn-sm btn-danger">削除</a>
+                            @endif
                         </p>
                     </div>
                 </div>

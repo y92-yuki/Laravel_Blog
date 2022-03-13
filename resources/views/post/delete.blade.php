@@ -10,7 +10,7 @@
                 <tr><th>編集時間</th><td>{{$post->updated_at->format('Y年n月j日 H時i分s秒')}}</td></tr>
             @endunless
             <tr><th>タイトル</th><td>{{$post->title}}</td></tr>
-            <tr><th>内容</th><td>{{$post->message}}</td></tr>
+            <tr><th>内容</th><td>{!!nl2br($post->message)!!}</td></tr>
         </table>
         
             <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeModal" data-backdrop="static">削除する</button>

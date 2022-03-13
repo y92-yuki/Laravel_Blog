@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <h2 class="text-center">新規投稿</h2>
-        <form action="/post/add" method="post">
+        <form action="/post/add" method="post" enctype="multipart/form-data">
             @csrf
             <div class="col-md-8">
                 <input type="hidden" name="user_id" value="{{$user_id}}">
@@ -24,6 +24,9 @@
                         @enderror
                     </div>
                     <textarea class="form-control" name="message" value="{{old('message')}}" placeholder="内容を入力してください" rows="5" ></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="file" name="file" class="form-control-file" >
                 </div>
                 <button type="submit" class="btn btn-primary">作成する</button>
                 <a href="/post" class="btn btn-success">戻る</a>

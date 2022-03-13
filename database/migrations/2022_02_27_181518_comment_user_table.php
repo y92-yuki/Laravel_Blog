@@ -13,6 +13,7 @@ class CommentUserTable extends Migration
      */
     public function up()
     {
+        // comment_likes
         Schema::create('comment_user',function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('comment_id');

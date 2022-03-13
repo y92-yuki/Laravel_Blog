@@ -17,10 +17,14 @@ class Post extends Model
     protected $guarded = ['id'];
     protected $softCascade = ['comment'];
 
-
-    public function getPostIndex() {
+    // https://readouble.com/laravel/8.x/ja/eloquent-mutators.html
+    public function getIndexTitleAttribute() {
         return $this->id . '.' . Str::limit($this->title,10,'...') . '(' . $this->user->name . ')';
     }
+
+    // public function getPostIndex() {
+    // //     return $this->id . '.' . Str::limit($this->title,10,'...') . '(' . $this->user->name . ')';
+    // // }
 
     public function postExistsLike() {
         return $this->users()->where('user_id',Auth::id())->exists();
@@ -40,6 +44,10 @@ class Post extends Model
 
     public function users() {
         return $this->belongsToMany('App\user')->withTimestamps();
+    }
+
+    public function images() {
+        return $this->hasMany('App\Image');
     }
 
     // public static function boot() {
