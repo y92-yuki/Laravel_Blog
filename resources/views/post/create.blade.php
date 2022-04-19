@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <h2 class="text-center">新規投稿</h2>
-        <form action="/post/add" method="post" enctype="multipart/form-data">
+        <form action="/post/create" method="post" enctype="multipart/form-data">
             @csrf
             <div class="col-md-8">
                 <input type="hidden" name="user_id" value="{{$user_id}}">
@@ -14,7 +14,7 @@
                             *{{$message}}
                         @enderror
                     </div>
-                    <input type="text" name="title" value="{{old('title')}}" class="form-control" placeholder="タイトルを20文字以内で入力してください">
+                    <input type="text" name="title" value="{{old('title')}}" class="form-control @error('title') is-invalid @enderror" placeholder="タイトルを20文字以内で入力してください">
                 </div>
                 <div class="form-group">
                     <label>内容</label>
@@ -23,7 +23,7 @@
                             *{{$message}}
                         @enderror
                     </div>
-                    <textarea class="form-control" name="message" value="{{old('message')}}" placeholder="内容を入力してください" rows="5" ></textarea>
+                    <textarea class="form-control @error('message') is-invalid @enderror" name="message" placeholder="内容を入力してください" rows="5" >{{ old('message') }}</textarea>
                 </div>
                 <div class="form-group">
                     <input type="file" name="file" class="form-control-file" >
