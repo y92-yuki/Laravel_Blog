@@ -50,8 +50,8 @@ Route::get('/post/show/delete/{comment}','CommentController@delete')->name('show
 Route::post('/post/show/delete','CommentController@remove');
 
 //コメントへのいいね機能
-Route::post('/post/{comment}/like','LikeController@like')->name('like');
-Route::post('/post/{comment}/unlike','LikeController@unlike')->name('unlike');
+Route::post('/post/comment/like','LikeController@like')->name('like');
+Route::post('/post/comment/unlike','LikeController@unlike')->name('unlike');
 
 //投稿へのいいね機能
 Route::post('/post/postLike','LikeController@postLike')->name('post.Like');

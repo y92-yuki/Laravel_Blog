@@ -97,10 +97,15 @@
 
 
 window.addEventListener('DOMContentLoaded', function () {
-  var postExistsLike = document.querySelector('input[name=postExistsLike]').value;
-  var token = document.querySelector('meta[name=csrf-token]').content;
-  var likeCount = document.querySelector('#likeCount');
-  var postLike = document.querySelectorAll('.postLike-toggle');
+  //投稿へのいいね機能
+  //resourcess->views->layouts->app.blade.phpのcsrf-tokenを取得
+  var token = document.querySelector('meta[name=csrf-token]').content; //ログイン中のユーザーがいいねをしているか判定(戻り値:0 or 1)
+
+  var postExistsLike = document.querySelector('input[name=postExistsLike]').value; //投稿へのいいね数の要素を取得
+
+  var postLikeCount = document.querySelector('#postLikeCount'); //いいね・取消ボタンを取得
+
+  var postLike = document.querySelectorAll('.postLike-toggle'); //投稿詳細へアクセス時にいいね・取消ボタンの表示を操作
 
   if (postExistsLike) {
     document.querySelector('.postLike').classList.add('d-none');
@@ -124,7 +129,7 @@ window.addEventListener('DOMContentLoaded', function () {
           },
           body: JSON.stringify(post_id)
         }).then(function () {
-          likeCount.textContent = String(parseInt(likeCount.textContent) - 1);
+          postLikeCount.textContent = String(parseInt(postLikeCount.textContent) - 1);
           event.parentNode.classList.toggle('d-none');
           document.querySelector('.postLike').classList.toggle('d-none');
         })["catch"](function (e) {
@@ -139,7 +144,7 @@ window.addEventListener('DOMContentLoaded', function () {
           },
           body: JSON.stringify(post_id)
         }).then(function () {
-          likeCount.textContent = String(parseInt(likeCount.textContent) + 1);
+          postLikeCount.textContent = String(parseInt(postLikeCount.textContent) + 1);
           event.parentNode.classList.toggle('d-none');
           document.querySelector('.postUnlike').classList.toggle('d-none');
         })["catch"](function (e) {
@@ -149,7 +154,71 @@ window.addEventListener('DOMContentLoaded', function () {
 
       ;
     };
-  });
+  }); //コメントへのいいね機能
+  //投稿にコメントがあるか判定(戻り値:要素 or null)
+
+  var commentNone = document.querySelector('input[name=commentNone]');
+
+  if (!commentNone) {
+    //ログイン中のユーザーがコメントへいいねしているか判定
+    var commentExistsLike = document.querySelectorAll('.commentExistsLike'); //いいね・取消ボタンの取得
+
+    var commentLike = document.querySelectorAll('.commentlike-toggle'); //投稿詳細へアクセス時にいいね・取消ボタンの表示を操作
+
+    commentExistsLike.forEach(function (item) {
+      if (item.value) {
+        item.nextElementSibling.nextElementSibling.classList.add('d-none');
+      } else {
+        item.nextElementSibling.classList.add('d-none');
+      }
+    });
+    commentLike.forEach(function (item) {
+      item.onclick = function (e) {
+        var event = e.currentTarget;
+        var comment_id = {
+          comment_id: event.value
+        };
+
+        if (event.classList.contains('commentUnlike')) {
+          fetch('/post/comment/unlike', {
+            method: 'POST',
+            headers: {
+              "X-CSRF-TOKEN": token,
+              "content-type": "application/json"
+            },
+            body: JSON.stringify(comment_id)
+          }).then(function () {
+            //コメントのいいね数を取得->更新
+            event.parentNode.lastElementChild.firstElementChild.textContent = String(parseInt(event.parentNode.lastElementChild.firstElementChild.textContent) - 1);
+            event.nextElementSibling.classList.toggle('d-none');
+            event.classList.toggle('d-none');
+          })["catch"](function (e) {
+            return console.log(e);
+          });
+        } else {
+          fetch('/post/comment/like', {
+            method: 'POST',
+            headers: {
+              "X-CSRF-TOKEN": token,
+              "content-type": "application/json"
+            },
+            body: JSON.stringify(comment_id)
+          }).then(function () {
+            //コメントのいいね数を取得->更新
+            event.parentNode.lastElementChild.firstElementChild.textContent = String(parseInt(event.parentNode.lastElementChild.firstElementChild.textContent) + 1);
+            event.previousElementSibling.classList.toggle('d-none');
+            event.classList.toggle('d-none');
+          })["catch"](function (e) {
+            return console.log(e);
+          });
+        }
+
+        ;
+      };
+    });
+  }
+
+  ;
 });
 
 /***/ }),

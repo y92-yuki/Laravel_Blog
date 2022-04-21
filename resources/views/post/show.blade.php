@@ -15,7 +15,7 @@
         <h2 class="text-center">投稿詳細</h2>
         <table class="table">
             <tr><th>投稿者</th><td>{{$post->user->name}}</td></tr>
-            <tr><th>いいねの数</th><td id="likeCount">{{ $post->users()->count() }}</td></tr>
+            <tr><th>いいねの数</th><td id="postLikeCount">{{ $post->users()->count() }}</td></tr>
             <tr><th>投稿時間</th><td>{{$post->created_at->format('Y年n月j日 H時i分s秒')}}</td></tr>
             @unless ($post->created_at == $post->updated_at)
                 <tr><th>編集時間</th><td>{{$post->updated_at->format('Y年n月j日 H時i分s秒')}}</td></tr>
@@ -29,18 +29,15 @@
         @endif
         <a href="/post" class="btn btn-success">戻る</a>
 
-        {{-- @if ($post->postExistsLike()) --}}
-            {{-- <form class="text-right" id="post_like" action="{{ route('post.Unlike',$post) }}" method="post"> --}}
-                <input type="hidden" name="postExistsLike" value="{{ $post->postExistsLike() }}">
-                <div class="text-right postUnlike">
-                    <button type="button" class="btn btn-success postLike-toggle" value="{{ $post->id }}">取消</button>
-                </div>
-        {{-- @else --}}
-            {{-- <form class="text-right" action="{{ route('post.Like',$post) }}" method="post"> --}}
-                <div class="text-right postLike">
-                    <button type="button" class="btn btn-primary postLike-toggle" value="{{ $post->id }}"><i class="fa-regular fas fa-lg fa-thumbs-up"></i> いいね!</button>
-                </div>
-        {{-- @endif --}}
+        {{-- 投稿へのいいね --}}
+        <input type="hidden" name="postExistsLike" value="{{ $post->postExistsLike() }}">
+        <div class="text-right postUnlike">
+            <button type="button" class="btn btn-success postLike-toggle" value="{{ $post->id }}">取消</button>
+        </div>
+        <div class="text-right postLike">
+            <button type="button" class="btn btn-primary postLike-toggle" value="{{ $post->id }}"><i class="fa-regular fas fa-lg fa-thumbs-up"></i> いいね!</button>
+        </div>
+
         @if ($post->user_id == Auth::id())
             <form action="{{ route('upload',['post_id' => $post->id]) }}" method="post" enctype="multipart/form-data">
                 @csrf
@@ -120,18 +117,10 @@
                     <div class="card-body">
                         <h6 class="card-title">
                             {{$comment->user->name}}({{$comment->created_at}})
-                            @if ($comment->existsLike())
-                                <form action="{{ route('unlike',$comment) }}" method="post">
-                                    @csrf
-                                    <button type="submit" class="float-right btn btn-success btn-sm">取消</button>
-                                </form>
-                            @else
-                                <form action="{{ route('like',$comment) }}" method="post">
-                                    @csrf
-                                    <button type="submit" class="float-right btn btn-primary btn-sm"><i class="fa-regular fas fa-thumbs-up"> いいね！</i></button>
-                                </form>
-                            @endif
-                            <p>いいねの数:{{ $comment->likes->count() }}</p>
+                            <input type="hidden" class="commentExistsLike" value="{{ $comment->existsLike() }}">
+                            <button type="button" class="float-right btn btn-success btn-sm commentLike-toggle commentUnlike" value="{{ $comment->id }}">取消</button>
+                            <button type="button" class="float-right btn btn-primary btn-sm commentLike-toggle commentLike" value="{{ $comment->id }}"><i class="fa-regular fas fa-thumbs-up"> いいね！</i></button>
+                            <p>いいねの数:<span class="commentLikeCount">{{ $comment->likes->count() }}</span></p>
                         </h6>
                         <p class="card-text">
                             {{$comment->message}}
@@ -142,7 +131,7 @@
                     </div>
                 </div>
             @empty
-
+                <input type="hidden" name="commentNone" value="commentNone">
             @endforelse
         </div>
     </div>
