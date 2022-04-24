@@ -157,68 +157,101 @@ window.addEventListener('DOMContentLoaded', function () {
   }); //コメントへのいいね機能
   //投稿にコメントがあるか判定(戻り値:要素 or null)
 
-  var commentNone = document.querySelector('input[name=commentNone]');
+  var commentNone = document.querySelector('input[name=commentNone]'); // if (!commentNone) {
+  //ログイン中のユーザーがコメントへいいねしているか判定
 
-  if (!commentNone) {
-    //ログイン中のユーザーがコメントへいいねしているか判定
-    var commentExistsLike = document.querySelectorAll('.commentExistsLike'); //いいね・取消ボタンの取得
+  var commentExistsLike = document.querySelectorAll('.commentExistsLike'); //いいね・取消ボタンの取得
+  // const commentLike = document.querySelectorAll('.commentlike-toggle');
+  //投稿詳細へアクセス時にいいね・取消ボタンの表示を操作
 
-    var commentLike = document.querySelectorAll('.commentlike-toggle'); //投稿詳細へアクセス時にいいね・取消ボタンの表示を操作
+  commentExistsLike.forEach(function (item) {
+    if (item.value) {
+      item.nextElementSibling.nextElementSibling.classList.add('d-none');
+    } else {
+      item.nextElementSibling.classList.add('d-none');
+    }
+  });
+  $(document).on('click', '.commentLike-toggle', function (e) {
+    var event = e.currentTarget;
+    var comment_id = {
+      comment_id: event.value
+    };
 
-    commentExistsLike.forEach(function (item) {
-      if (item.value) {
-        item.nextElementSibling.nextElementSibling.classList.add('d-none');
-      } else {
-        item.nextElementSibling.classList.add('d-none');
-      }
-    });
-    commentLike.forEach(function (item) {
-      item.onclick = function (e) {
-        var event = e.currentTarget;
-        var comment_id = {
-          comment_id: event.value
-        };
+    if (event.classList.contains('commentUnlike')) {
+      fetch('/post/comment/unlike', {
+        method: 'POST',
+        headers: {
+          "X-CSRF-TOKEN": token,
+          "content-type": "application/json"
+        },
+        body: JSON.stringify(comment_id)
+      }).then(function () {
+        //コメントのいいね数を取得->更新
+        event.parentNode.lastElementChild.firstElementChild.textContent = String(parseInt(event.parentNode.lastElementChild.firstElementChild.textContent) - 1);
+        event.nextElementSibling.classList.toggle('d-none');
+        event.classList.toggle('d-none');
+      })["catch"](function (e) {
+        return console.log(e);
+      });
+    } else {
+      fetch('/post/comment/like', {
+        method: 'POST',
+        headers: {
+          "X-CSRF-TOKEN": token,
+          "content-type": "application/json"
+        },
+        body: JSON.stringify(comment_id)
+      }).then(function () {
+        //コメントのいいね数を取得->更新
+        event.parentNode.lastElementChild.firstElementChild.textContent = String(parseInt(event.parentNode.lastElementChild.firstElementChild.textContent) + 1);
+        event.previousElementSibling.classList.toggle('d-none');
+        event.classList.toggle('d-none');
+      })["catch"](function (e) {
+        return console.log(e);
+      });
+    }
 
-        if (event.classList.contains('commentUnlike')) {
-          fetch('/post/comment/unlike', {
-            method: 'POST',
-            headers: {
-              "X-CSRF-TOKEN": token,
-              "content-type": "application/json"
-            },
-            body: JSON.stringify(comment_id)
-          }).then(function () {
-            //コメントのいいね数を取得->更新
-            event.parentNode.lastElementChild.firstElementChild.textContent = String(parseInt(event.parentNode.lastElementChild.firstElementChild.textContent) - 1);
-            event.nextElementSibling.classList.toggle('d-none');
-            event.classList.toggle('d-none');
-          })["catch"](function (e) {
-            return console.log(e);
-          });
-        } else {
-          fetch('/post/comment/like', {
-            method: 'POST',
-            headers: {
-              "X-CSRF-TOKEN": token,
-              "content-type": "application/json"
-            },
-            body: JSON.stringify(comment_id)
-          }).then(function () {
-            //コメントのいいね数を取得->更新
-            event.parentNode.lastElementChild.firstElementChild.textContent = String(parseInt(event.parentNode.lastElementChild.firstElementChild.textContent) + 1);
-            event.previousElementSibling.classList.toggle('d-none');
-            event.classList.toggle('d-none');
-          })["catch"](function (e) {
-            return console.log(e);
-          });
-        }
-
-        ;
-      };
-    });
-  }
-
-  ;
+    ;
+  }); // };
+  // commentLike.forEach((item) => {
+  //     item.onclick = (e) => {
+  //         const event = e.currentTarget;
+  //         const comment_id = {comment_id: event.value};
+  //         if (event.classList.contains('commentUnlike')) {
+  //             fetch('/post/comment/unlike',{
+  //                 method: 'POST',
+  //                 headers: {
+  //                     "X-CSRF-TOKEN": token,
+  //                     "content-type": "application/json"
+  //                 },
+  //                 body: JSON.stringify(comment_id)
+  //             })
+  //             .then(() => {
+  //                 //コメントのいいね数を取得->更新
+  //                 event.parentNode.lastElementChild.firstElementChild.textContent = String(parseInt(event.parentNode.lastElementChild.firstElementChild.textContent) - 1);
+  //                 event.nextElementSibling.classList.toggle('d-none');
+  //                 event.classList.toggle('d-none');
+  //             })
+  //             .catch(e => console.log(e));
+  //         } else {
+  //             fetch ('/post/comment/like',{
+  //                 method: 'POST',
+  //                 headers: {
+  //                     "X-CSRF-TOKEN": token,
+  //                     "content-type": "application/json"
+  //                 },
+  //                 body: JSON.stringify(comment_id)
+  //             })
+  //             .then(() => {
+  //                 //コメントのいいね数を取得->更新
+  //                 event.parentNode.lastElementChild.firstElementChild.textContent = String(parseInt(event.parentNode.lastElementChild.firstElementChild.textContent) + 1);
+  //                 event.previousElementSibling.classList.toggle('d-none');
+  //                 event.classList.toggle('d-none');
+  //             })
+  //             .catch(e => console.log(e));
+  //         };
+  //     };
+  // });
 });
 
 /***/ }),
