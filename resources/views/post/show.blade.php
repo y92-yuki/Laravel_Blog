@@ -87,29 +87,28 @@
             </div>
         </div>
         
-        @if ($post->user_id == Auth::id())
             
-        @endif
 
         @foreach ($post->images as $image)
             <img src="{{ asset('storage/' . $post->user_id . '/' .$image->path) }}" class="mb-2">
         @endforeach
 
         <h4 class="my-5">コメントを残す</h4>
-        <div class="col-5">
-            <form action="/post/show" method="post">
+        <div class="col-5" id="commentArea">
+            <div class="alert alert-success text-center" style="display: none">
+                コメントの投稿が完了しました
+            </div>
+            <div class="alert alert-danger text-center" style="display: none">
+                コメントの投稿に失敗しました
+            </div>
+            <form action="/post/show" method="post" id="commentSubmit" >
                 @csrf
                 <input type="hidden" name="user_id" value="{{Auth::id()}}">
                 <input type="hidden" name="post_id" value="{{$post->id}}">
                 <div class="form-group">
-                    <div class="text-danger">
-                        @error('message')
-                            *{{$message}}
-                        @enderror
-                    </div>
                     <textarea name="message" class="form-control" placeholder="コメントは20文字以内で入力してください"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary mb-5">コメントする</button>
+                <button type="submit"class="btn btn-primary mb-5">コメントする</button>
             </form>
         
             @forelse ($post->comment as $comment)
@@ -131,10 +130,12 @@
                     </div>
                 </div>
             @empty
-                <input type="hidden" name="commentNone" value="commentNone">
+
             @endforelse
         </div>
     </div>
 @endsection
 
 <script src="{{ mix('js/like.js') }}"></script>
+<script src="{{ mix('js/comment.js') }}"></script>
+<script src="{{ mix('js/flashMessageControl.js') }}"></script>
