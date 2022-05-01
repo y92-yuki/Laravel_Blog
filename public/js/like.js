@@ -157,12 +157,9 @@ window.addEventListener('DOMContentLoaded', function () {
   }); //コメントへのいいね機能
   //投稿にコメントがあるか判定(戻り値:要素 or null)
 
-  var commentNone = document.querySelector('input[name=commentNone]'); // if (!commentNone) {
-  //ログイン中のユーザーがコメントへいいねしているか判定
+  var commentNone = document.querySelector('input[name=commentNone]'); //ログイン中のユーザーがコメントへいいねしているか判定
 
-  var commentExistsLike = document.querySelectorAll('.commentExistsLike'); //いいね・取消ボタンの取得
-  // const commentLike = document.querySelectorAll('.commentlike-toggle');
-  //投稿詳細へアクセス時にいいね・取消ボタンの表示を操作
+  var commentExistsLike = document.querySelectorAll('.commentExistsLike'); //投稿詳細へアクセス時にいいね・取消ボタンの表示を操作
 
   commentExistsLike.forEach(function (item) {
     if (item.value) {

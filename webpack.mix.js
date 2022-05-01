@@ -15,4 +15,5 @@ mix.js('resources/js/app.js', 'public/js')
    .js('resources/js/like.js','public/js')
    .js('resources/js/comment.js','public/js')
    .js('resources/js/flashMessageControl.js','public/js')
+   .js('resources/js/ForeCastApi.js','public/js')
    .sass('resources/sass/app.scss', 'public/css');
