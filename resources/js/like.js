@@ -68,12 +68,8 @@
         //投稿にコメントがあるか判定(戻り値:要素 or null)
         const commentNone = document.querySelector('input[name=commentNone]');
 
-        // if (!commentNone) {
             //ログイン中のユーザーがコメントへいいねしているか判定
             const commentExistsLike = document.querySelectorAll('.commentExistsLike');
-
-            //いいね・取消ボタンの取得
-            // const commentLike = document.querySelectorAll('.commentlike-toggle');
 
             //投稿詳細へアクセス時にいいね・取消ボタンの表示を操作
             commentExistsLike.forEach((item) => {

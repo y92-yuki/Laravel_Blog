@@ -84,7 +84,14 @@ Route::prefix('mypage')->group(function() {
     Route::get('/{user}/editemail','UserController@editEmail')->name('edit.email')->middleware('auth');
     Route::post('/editemail/sendemaillink','UserController@sendChangeEmailLink')->name('send.email');
 
+    //地域変更
+    Route::get('/{user}/editprefectures','UserController@editPrefectures')->name('edit.pref');
+    Route::post('/{user}/editprefectures','UserController@updatePrefectures')->name('edit.pref');
+
 });
 
 //パスワードリセットのトークン確認
 Route::get('reset/{token}','UserController@reset');
+
+//APIデータを取得
+Route::post('getForeCast','ApiController@getForeCastApi');
