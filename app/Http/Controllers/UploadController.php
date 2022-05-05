@@ -54,12 +54,12 @@ class UploadController extends Controller
             $remove_image = $post->user_id . '/' . $image->path;
             $image->delete();
             Storage::disk('public')->delete($remove_image);
-            session()->flash('success_message','画像の削除が完了しました');
+            session()->flash('success_message','投稿が完了しました');
 
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            session()->flash('error_message','画像の削除に失敗しました');
+            session()->flash('error_message','投稿に失敗しました');
         }
         
         return redirect(route('post.show',compact('post_id')));
