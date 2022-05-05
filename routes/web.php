@@ -26,65 +26,55 @@ Auth::routes(['verify' => true]);
 //     return redirect('/');
 // });
 
-Route::prefix('post')->group(function() {
-    //投稿一覧画面
-    Route::get('','PostController@index')->name('post')->middleware(['verified']);
+//投稿一覧画面
+Route::get('post','PostController@index')->name('post')->middleware(['verified']);
 
-    //新規投稿画面
-    Route::get('/create','PostController@create')->name('post.create')->middleware('auth');
-    Route::post('/create','PostController@store');
+//新規投稿画面
+Route::get('/post/create','PostController@create')->name('post.create')->middleware('auth');
+Route::post('/post/create','PostController@store');
 
-    //投稿詳細画面
-    Route::get('/show/{post_id}','PostController@show')->name('post.show')->middleware('auth');
+//投稿詳細画面
+Route::get('/post/show/{post_id}','PostController@show')->name('post.show')->middleware('auth');
 
-    //コメント投稿
-    Route::post('/show','CommentController@addComment');
+//コメント投稿
+Route::post('/post/show','CommentController@addComment');
 
-    //投稿編集画面
-    Route::get('/edit/{post}','PostController@edit')->name('post.edit')->middleware('auth');
-    Route::post('/edit','PostController@update');
+//投稿編集画面
+Route::get('/post/edit/{post}','PostController@edit')->name('post.edit')->middleware('auth');
+Route::post('/post/edit','PostController@update');
 
-    //投稿削除画面
-    Route::get('/delete/{post}','PostController@deleteConfirm')->name('post.deleteConfirm')->middleware('auth');
-    Route::post('/delete','PostController@delete');
+//投稿削除機能
+Route::get('/post/delete/{post}','PostController@deleteConfirm')->name('post.deleteConfirm')->middleware('auth');
+Route::post('/post/delete','PostController@delete');
 
-    //コメント削除画面
-    Route::get('/show/delete/{comment}','CommentController@delete')->name('show.delete')->middleware('auth');
-    Route::post('/show/delete','CommentController@remove');
+//コメント削除画面
+Route::get('/post/show/delete/{comment}','CommentController@delete')->name('show.delete')->middleware('auth');
+Route::post('/post/show/delete','CommentController@remove');
 
-    //コメントへのいいね機能
-    Route::post('/comment/like','LikeController@like')->name('like');
-    Route::post('/comment/unlike','LikeController@unlike')->name('unlike');
+//コメントへのいいね機能
+Route::post('/post/comment/like','LikeController@like')->name('like');
+Route::post('/post/comment/unlike','LikeController@unlike')->name('unlike');
 
-    //投稿へのいいね機能
-    Route::post('/postLike','LikeController@postLike')->name('post.Like');
-    Route::post('/postUnlike','LikeController@postUnlike')->name('post.Unlike');
+//投稿へのいいね機能
+Route::post('/post/postLike','LikeController@postLike')->name('post.Like');
+Route::post('/post/postUnlike','LikeController@postUnlike')->name('post.Unlike');
 
-});
+//投稿詳細画面からの画像投稿機能
+Route::post('/upload','UploadController@store')->name('upload');
 
-Route::prefix('upload')->group(function() {
-    //投稿詳細画面から画像投稿機能
-    Route::post('','UploadController@store')->name('upload');
+//画像削除機能
+Route::post('/upload/{post}/delete','UploadController@delete')->name('upload.delete');
 
-    //画像削除機能
-    Route::post('/{post}/delete','UploadController@delete')->name('upload.delete');
+//my page
+Route::get('/mypage','UserController@info')->name('myPage')->middleware('auth');
 
+//パスワード変更
+Route::get('/mypage/{user}/editpassword','UserController@editPassword')->name('edit.password')->middleware('auth');
+Route::post('/mypage/{user}/editpassword','UserController@updatePassword')->name('edit.password');
 
-});
+//メールアドレス変更画面
+Route::get('/mypage/{user}/editemail','UserController@editEmail')->name('edit.email')->middleware('auth');
 
-Route::prefix('mypage')->group(function() {
-    //マイページ
-    Route::get('','UserController@info')->name('myPage')->middleware('auth');
+Route::post('/mypage/editemail/sendemaillink','UserController@sendChangeEmailLink')->name('send.email');
 
-    //パスワード変更
-    Route::get('/{user}/editpassword','UserController@editPassword')->name('edit.password')->middleware('auth');
-    Route::post('/{user}/editpassword','UserController@updatePassword')->name('edit.password');
-
-    //メールアドレス変更
-    Route::get('/{user}/editemail','UserController@editEmail')->name('edit.email')->middleware('auth');
-    Route::post('/editemail/sendemaillink','UserController@sendChangeEmailLink')->name('send.email');
-
-});
-
-//パスワードリセットのトークン確認
 Route::get('reset/{token}','UserController@reset');
