@@ -52,10 +52,8 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'pref' => ['integer','between:1,47'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ],
-        ['pref.between' => '地域を選択してください']);
+        ]);
     }
 
     /**
@@ -69,7 +67,6 @@ class RegisterController extends Controller
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'prefecturesNum' => $data['pref'],
             'password' => Hash::make($data['password']),
         ]);
     }

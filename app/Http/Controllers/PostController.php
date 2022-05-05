@@ -10,25 +10,19 @@ use App\Image as Upload;
 use Illuminate\Support\Facades\Storage;
 use App\Services\RegisterImage;
 use Illuminate\Support\Facades\DB;
-use App\User;
+
 
 class PostController extends Controller
 {
     public function index(Request $request) {
-        $user = Auth::user();
-        $prefecturesNum = $user->prefecturesNum;
-        $pref = User::$prefs[$prefecturesNum];
-        $prefOfficeLocation = User::$prefOfficeLocation[$prefecturesNum];
-        $param = ['pref' => $pref,'prefofficeLocation' => $prefOfficeLocation];
-
         if (empty($request->search_value)) {
             $posts = Post::orderBy('id','desc')->paginate(5);
-            $param += ['posts' => $posts,'search' => false];
+            $param = ['posts' => $posts,'search' => false];
             return view('post.index',$param);
         } else {
             $search = "%".$request->search_value."%";
             $posts = Post::where('title','like',$search)->orWhere('message','like',$search)->orderBy('id','desc')->paginate(5);
-            $param += ['posts' => $posts,'search' => $search];
+            $param = ['posts' => $posts,'search' => $search];
             return view('post.index',$param);
         }
     }

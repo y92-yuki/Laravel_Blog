@@ -21,16 +21,6 @@
             <button type="submit" class="btn btn-success">検索</button>
         </div>
     </form>
-    <div class="weatherInfo">
-        <input type="hidden" name="pref" value="{{ $pref }}">
-        <input type="hidden" name="prefofficeLocation" value="{{ $prefofficeLocation }}">
-        <p class="weatherTime h5"></p>
-        <img class="weatherIcon">
-        <p class="description d-inline"></p>
-        <img class="tempIcon ml-3">
-        <p class="tempMax d-inline h5 text-danger"></p>
-        <p class="tempMin d-inline h5 text-primary ml-3"></p>
-    </div>
     <h2 class="text-center">投稿一覧</h2>
         @forelse($posts as $post)
             <table class="table">
@@ -71,4 +61,3 @@
 @endsection
 
 <script src="{{ mix('js/flashMessageControl.js') }}"></script>
-<script src="{{ mix('js/ForeCastApi.js') }}"></script>

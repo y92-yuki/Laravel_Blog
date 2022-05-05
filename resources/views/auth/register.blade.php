@@ -40,24 +40,6 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="pref" class="col-md-4 col-form-label text-md-right">{{ __('Prefectures') }}</label>
-
-                            <div class="col-md-6">
-                                <select name="pref" class="form-control @error('pref') is-invalid @enderror">
-                                    <option value="0">選択してください</option>
-                                    @foreach(App\User::$prefs as $key => $pref)
-                                        <option value="{{ $key }}" @if($key == old('pref')) selected @endif>{{ $pref }}</option>
-                                    @endforeach
-                                </select> 
-                                @error('pref')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
                             <div class="col-md-6">

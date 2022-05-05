@@ -25,7 +25,6 @@ class ChangeEmailRequest extends FormRequest
     {
         return [
             'new_email' => ['required','string','email','max:255','unique:users,email','confirmed'],
-            'password' => ['required','password']
         ];
     }
 
@@ -36,10 +35,8 @@ class ChangeEmailRequest extends FormRequest
             'new_email.string' => 'メールアドレスは文字で入力してください',
             'new_email.email' => '@ が含まれてません',
             'new_email.max' => 'メールアドレスが長過ぎます',
-            'new_email.unique' => 'メールアドレスは既に使用されています',
+            'new_email.unique' => 'そのメールアドレスは既に使用されています',
             'new_email.confirmed' => 'メールアドレスが確認用と一致しません',
-            'password.required' => 'パスワードを入力してください',
-            'password.password' => 'パスワードを確認できません'
         ];
     }
 }

@@ -20,24 +20,13 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <input type="text" name="new_email" value="{{ old('new_email') }}" class="form-control @error('new_email') is-invalid @enderror">
+                                <input type="text" name="new_email" class="form-control @error('new_email') is-invalid @enderror">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <span class="h5">確認</span>
                             <div class="form-group">
                                 <input type="text" name="new_email_confirmation" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <span class="h5">パスワード</span>
-                            <div class="text-danger">
-                                @error('password')
-                                    {{ $message }}
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <input type="password" name="password" class="form-control @error('password') is-invalid @enderror">
                             </div>
                         </div>
                         <div class="col-md-6">
