@@ -90,5 +90,3 @@
 </div>
 
 @endsection
-
-<script src="{{ mix('js/flashMessageControl.js') }}"></script>

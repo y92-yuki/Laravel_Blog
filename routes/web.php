@@ -35,8 +35,6 @@ Route::post('/post/create','PostController@store');
 
 //投稿詳細画面
 Route::get('/post/show/{post_id}','PostController@show')->name('post.show')->middleware('auth');
-
-//コメント投稿
 Route::post('/post/show','CommentController@addComment');
 
 //投稿編集画面
