@@ -31,6 +31,12 @@ class Post extends Model
     // // }
 
     public function postExistsLike() {
+        // if ($this->users()->where('user_id',Auth::id())->exists()) {
+        //     return true;
+        // } else {
+        //     return false;
+        // }
+
         return $this->users()->where('user_id',Auth::id())->exists();
     }
 
