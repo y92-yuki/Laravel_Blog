@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Comment;
 use Illuminate\Support\Facades\Auth;
 use App\Post;
-use PHPUnit\Util\Json;
 
 class LikeController extends Controller
 {
@@ -20,17 +19,13 @@ class LikeController extends Controller
         return redirect(route('post.show',['post_id' => $comment->post->id]));
     }
 
-    public function postLike(Request $request) {
-        $post = Post::find($request->post_id);
+    public function postLike(Post $post) {
         $post->users()->attach(Auth::id());
-        $post_id = ['post_id' => $post->id,'user' => Auth::id()];
-        // return response()->json($post_id);
+        return redirect(route('post.show',['post_id' => $post->id]));
     } 
 
-    public function postUnlike(Request $request) {
-        $post = Post::find($request->post_id);
+    public function postUnlike(Post $post) {
         $post->users()->detach(Auth::id());
-        $post_id = ['post_id' => $post->id,'user' => Auth::id()];
-        // return response()->json($post_id);
+        return redirect(route('post.show',['post_id' => $post->id]));
     }
 }

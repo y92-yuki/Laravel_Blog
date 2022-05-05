@@ -1,21 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-@if (session()->has('success_message'))
-        <div class="alert alert-success text-center">
-            {{ session('success_message') }}
-        </div>
-@endif
-@if (session()->has('error_message'))
-        <div class="alert alert-danger text-center">
-            {{ session('error_message') }}
-        </div>
-@endif
     <div class="container">
         <h2 class="text-center">投稿詳細</h2>
         <table class="table">
             <tr><th>投稿者</th><td>{{$post->user->name}}</td></tr>
-            <tr><th>いいねの数</th><td id="likeCount">{{ $post->users()->count() }}</td></tr>
+            <tr><th>いいねの数</th><td>{{ $post->users()->count() }}</td></tr>
             <tr><th>投稿時間</th><td>{{$post->created_at->format('Y年n月j日 H時i分s秒')}}</td></tr>
             @unless ($post->created_at == $post->updated_at)
                 <tr><th>編集時間</th><td>{{$post->updated_at->format('Y年n月j日 H時i分s秒')}}</td></tr>
@@ -25,22 +15,21 @@
         </table>
         @if ($post->user_id == Auth::id())
             <a href="{{ route('post.edit',$post) }}" class="btn btn-primary">編集</a>
-            <a href="{{ route('post.deleteConfirm', ['post' => $post->id]) }}" class="btn btn-danger">削除</a>
+            <a href="{{ route('post.delete', ['post' => $post->id]) }}" class="btn btn-danger">削除</a>
         @endif
         <a href="/post" class="btn btn-success">戻る</a>
 
-        {{-- @if ($post->postExistsLike()) --}}
-            {{-- <form class="text-right" id="post_like" action="{{ route('post.Unlike',$post) }}" method="post"> --}}
-                <input type="hidden" name="postExistsLike" value="{{ $post->postExistsLike() }}">
-                <div class="text-right postUnlike">
-                    <button type="button" class="btn btn-success postLike-toggle" value="{{ $post->id }}">取消</button>
-                </div>
-        {{-- @else --}}
-            {{-- <form class="text-right" action="{{ route('post.Like',$post) }}" method="post"> --}}
-                <div class="text-right postLike">
-                    <button type="button" class="btn btn-primary postLike-toggle" value="{{ $post->id }}"><i class="fa-regular fas fa-lg fa-thumbs-up"></i> いいね!</button>
-                </div>
-        {{-- @endif --}}
+        @if ($post->postExistsLike())
+            <form class="text-right" action="{{ route('post.Unlike',$post) }}" method="post">
+                @csrf
+                <button type="submit" class="btn btn-success">取消</button>
+            </form>
+        @else
+            <form class="text-right" action="{{ route('post.Like',$post) }}" method="post">
+                @csrf
+                <button type="submit" class="btn btn-primary"><i class="fa-regular fas fa-lg fa-thumbs-up"></i> いいね!</button>
+            </form>
+        @endif
         @if ($post->user_id == Auth::id())
             <form action="{{ route('upload',['post_id' => $post->id]) }}" method="post" enctype="multipart/form-data">
                 @csrf
@@ -70,7 +59,7 @@
                         <h4><div class="modal-title" id="myModalLabel">削除確認画面</div></h4>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('upload.delete',$post) }}" method="post">
+                        <form action="{{ route('upload.delete',['post_id' => $post->id]) }}" method="post">
                             @csrf
                             削除する画像を選択してください
                             <div class="form-group">
@@ -95,7 +84,7 @@
         @endif
 
         @foreach ($post->images as $image)
-            <img src="{{ asset('storage/' . $post->user_id . '/' .$image->path) }}" class="mb-2">
+            <img src="{{ asset('storage/' . $image->path) }}" class="mb-2">
         @endforeach
 
         <h4 class="my-5">コメントを残す</h4>
@@ -147,5 +136,3 @@
         </div>
     </div>
 @endsection
-
-<script src="{{ mix('js/like.js') }}"></script>

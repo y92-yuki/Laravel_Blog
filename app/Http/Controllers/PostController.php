@@ -4,21 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Post;
+use App\Comment;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Console\Presets\React;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PostRequest;
 use App\Image as Upload;
-use Illuminate\Support\Facades\Storage;
-use App\Services\RegisterImage;
-use Illuminate\Support\Facades\DB;
-
+use Image;
 
 class PostController extends Controller
 {
     public function index(Request $request) {
         if (empty($request->search_value)) {
             $posts = Post::orderBy('id','desc')->paginate(5);
-            $param = ['posts' => $posts,'search' => false];
-            return view('post.index',$param);
+            return view('post.index',['posts' => $posts]);
         } else {
             $search = "%".$request->search_value."%";
             $posts = Post::where('title','like',$search)->orWhere('message','like',$search)->orderBy('id','desc')->paginate(5);
@@ -27,49 +26,42 @@ class PostController extends Controller
         }
     }
 
-    public function create(Request $request) {
-        return view('post.create',['user_id' => Auth::id()]);
+    // create
+    public function add(Request $request) {
+        return view('post.add',['user_id' => Auth::id()]);
     }
 
-    public function store(PostRequest $request) {
+    // store register
+    public function create(PostRequest $request) {
+        $post = new Post;
+        // $form = $request->all();
+        // $post_data = $request->only(['hoge', 'hoge']);
+        $post_data = $request->except(['_token']);
+        // unset($form['_token']);
+        $post->fill($post_data)->save();
 
-        try {
-            DB::beginTransaction();
-
-            $post = new Post;
-            $post_data = $request->except(['_token']);
-            $post->fill($post_data)->save();
+        if ($request->file) {
+            // unset($form['_token'],$form['file']);
+            // $post->fill($form)->save();
             
-            if ($request->file) {
-
-                $path = time() . '_' . mt_rand() . '_' . $request->file->getClientOriginalName();
-                $save_path = storage_path('app/public/' . Auth::id() . '/' . $path);
-
-                if (!Storage::disk('public')->exists(Auth::id())) {
-                    Storage::disk('public')->makeDirectory(Auth::id());
-                }
-
-                Upload::create([
-                    'post_id' => $post->id, 
-                    'user_id' => Auth::id(), 
-                    'path' => $path
-                ]);
-
-                RegisterImage::resizeRegisterImage($request->file, 600, $save_path);
-            }
-            session()->flash('success_message','投稿が完了しました');
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            session()->flash('error_message','投稿に失敗しました');
+            $path = $request->file('file')->getClientOriginalName();
+            $save_path = storage_path() . '/app/public/' .$path;
+            $image = Image::make($request->file);
+            $image->resize(600,null,function($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+            $image->save($save_path);
+            Upload::create(['post_id' => $post->id, 'user_id' => Auth::id(), 'path' => $path]);
         }
+
 
         return redirect('/post');
     }
 
     public function show(Request $request) {
         $post = Post::find($request->post_id);
-        return view('post.show',compact('post'));
+        return view('post.show',['post' => $post]);
     }
 
     public function edit(Post $post) {
@@ -81,55 +73,40 @@ class PostController extends Controller
     }
 
     public function update(PostRequest $request) {
-        try {
-            $post = Post::find($request->id);
-            $post_data = $request->only('title','message');
-            $post->fill($post_data)->save();
-
-            session()->flash('success_message','投稿の編集が完了しました');
-        } catch (\Exception $e) {
-            session()->flash('error_message','投稿の編集に失敗しました');
-        }
-
+        $post = Post::find($request->id);
+        $post->title = $request->title;
+        $post->message = $request->message;
+        $post->save();
         return redirect('/post');
     }
 
-
-    public function deleteConfirm(Post $post) {
+    // deleteConfirm
+    public function delete(Post $post, Request $request) {
         if ($post->user_id == Auth::id()) {
-            return view('post.deleteConfirm',['post' => $post]);
+            return view('post.delete',['post' => $post]);
         } else {
             return redirect('/post');
         }
     }
 
+    // delete
+    public function remove(Request $request) {
+        $post = Post::find($request->id);
+        $comments = Comment::where('post_id',$post->id)->get();
 
-    public function delete(Request $request) {
-        $post = Post::with('comment')->find($request->id);
-        $images = $post->images;
+        // transaction
+        // transaction start
 
-        try {
-            DB::beginTransaction();
+        // transaction commit
 
-            foreach ($post['comment'] as $comment) {
-                $comment->likes()->detach();
-            }
-            $post->users()->detach();
+        // transaction rollback
 
-            foreach ($images as $image) {
-                $remove_image = $post->user_id . '/' . $image->path;
-                $image->delete();
-                Storage::disk('public')->delete($remove_image);
-            }
-            $post->delete();
-
-            session()->flash('success_message','投稿の削除が完了しました');
-
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            session()->flash('error_message','投稿の削除に失敗しました');
+        foreach ($comments as $comment) {
+            $comment->likes()->detach();
         }
+        $post->users()->detach();
+        $post->delete();
+
 
         return redirect('/post');
     }

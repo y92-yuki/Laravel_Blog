@@ -1,17 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-@if (session()->has('success_message'))
-        <div class="alert alert-success text-center">
-            {{ session('success_message') }}
-        </div>
-@endif
-@if (session()->has('error_message'))
-        <div class="alert alert-danger text-center">
-            {{ session('error_message') }}
-        </div>
-@endif
-
 <div class="container">
     <form action="/post" method="get" class="float-right">
         <div class="form-inline">
@@ -52,10 +41,10 @@
         @endforelse
         {{$posts->appends(request()->query())->links()}}
     <div>
-        <a href="{{ route('post.create') }}" class="btn btn-primary">新規投稿</a>
-        @if($search)
+        <a href="{{ route('post.add') }}" class="btn btn-primary">新規投稿</a>
+        @isset($search)
             <a href="{{ route('post') }}" class="btn btn-success">一覧へ戻る</a>
-        @endif
+        @endisset
     </div>
 </div>
 @endsection

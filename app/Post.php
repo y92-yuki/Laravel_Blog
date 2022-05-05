@@ -22,21 +22,11 @@ class Post extends Model
         return $this->id . '.' . Str::limit($this->title,10,'...') . '(' . $this->user->name . ')';
     }
 
-    public function getIdTitleAttribute() {
-        return $this->id . '.' .Str::limit($this->title,10,'...');
-    }
-
     // public function getPostIndex() {
     // //     return $this->id . '.' . Str::limit($this->title,10,'...') . '(' . $this->user->name . ')';
     // // }
 
     public function postExistsLike() {
-        // if ($this->users()->where('user_id',Auth::id())->exists()) {
-        //     return true;
-        // } else {
-        //     return false;
-        // }
-
         return $this->users()->where('user_id',Auth::id())->exists();
     }
 

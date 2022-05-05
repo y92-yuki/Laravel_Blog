@@ -6,60 +6,46 @@ use Illuminate\Http\Request;
 use App\Image as Upload;
 use Illuminate\Support\Facades\Auth;
 use Image;
-use App\Post;
 use Illuminate\Support\Facades\Storage;
-use App\Services\RegisterImage;
-use Illuminate\Support\Facades\DB;
 
 class UploadController extends Controller
 {
     public function store(Request $request) {    
-    
+        
         //ファイルを選択せずにアップロードボタンを選択した場合は元の投稿詳細画面へリダイレクト
-
-        $post_id = $request->post_id;
-
-        try {
-            DB::beginTransaction();
-
-            if ($request->file) {
-                $path = time() . '_' . mt_rand() . '_' . $request->file->getClientOriginalName();
-                $save_path = storage_path('app/public/' . Auth::id() . '/' . $path);
-                if (!Storage::disk('public')->exists(Auth::id())) {
-                    Storage::disk('public')->makeDirectory(Auth::id());
-                }
-                Upload::create(['post_id' => $post_id, 'user_id' => Auth::id(), 'path' => $path]);
-
-                RegisterImage::resizeRegisterImage($request->file, 600, $save_path);
-
-                session()->flash('success_message','画像の添付が完了しました');
-
-                DB::commit();
-            } else {
-                session()->flash('error_message','画像ファイルを選択してください');
-            }
-        } catch (\Exception $e) {
-            DB::rollBack();
-            session()->flash('error_message','画像の添付に失敗しました');
-        }            
+        if (empty($request->file)) {
+            $post_id = $request->post_id;
             return redirect(route('post.show',compact('post_id')));
+        } else {
+
+            // リサイズ関連の処理をservice化してメソッドを呼び出す
+
+            //画像をRe sizeして保存
+            $post_id = $request->post_id;
+            $path = $request->file->getClientOriginalName();
+            $save_path = storage_path() . '/app/public/' . $path;
+            $image = Image::make($request->file);
+
+            $image->resize(600,null,function($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+                }
+            );
+            $image->save($save_path);
+
+            Upload::create(['post_id' => $post_id,'user_id' => Auth::id(),'path' => $path]);
+            return redirect(route('post.show',compact('post_id')));
+        }
     }
 
-    public function delete(Post $post, Request $request) {
-        try {
-            DB::beginTransaction();
-
-            $post_id = $post->id;
-            $image = Upload::find($request->image_id);
-            $remove_image = $post->user_id . '/' . $image->path;
-            $image->delete();
-            Storage::disk('public')->delete($remove_image);
-
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-        }
-        
+    public function remove(Request $request) {
+        $post_id = $request->post_id;
+        $image = Upload::find($request->image_id);
+        $remove_image = 'public/' . $image->path;
+        // Storage::disk('local')->makeDirectory('public/1');
+        Storage::makeDirectory('public/1');
+        // Storage::delete($remove_image);
+        // $image->delete();
         return redirect(route('post.show',compact('post_id')));
     }
 }
