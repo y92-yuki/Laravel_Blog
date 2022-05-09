@@ -9,7 +9,7 @@ class ForecastApiController extends Controller
 {
     public function getForeCastApi(Request $request) {
         //OpenWeatherのAPI Key
-        $apiKey = env('OPEN_WEATHER_APIKEY');
+        $apiKey = config('forecast.apikey');
         //ログインユーザーの登録地域
         $pref = $request->locations;
         //地域名から緯度・経度を取得するためのAPI
