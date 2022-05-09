@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Http\Request;
 
-class ApiController extends Controller
+class ForecastApiController extends Controller
 {
     public function getForeCastApi(Request $request) {
         //OpenWeatherのAPI Key

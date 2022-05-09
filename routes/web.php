@@ -94,4 +94,4 @@ Route::prefix('mypage')->group(function() {
 Route::get('reset/{token}','UserController@reset');
 
 //APIデータを取得
-Route::post('getForeCast','ApiController@getForeCastApi');
+Route::post('getForeCast','ForecastApiController@getForeCastApi');
