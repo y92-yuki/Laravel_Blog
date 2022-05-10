@@ -49,7 +49,8 @@
                 <div class="card-text">
                     <ul>
                         @forelse ($user['comment'] as $comment)
-                            <li><a href="{{ route('post.show',['post_id' => $comment->post_id]) }}">{{ $comment->CommentPostuser }}</a> (いいね:{{ $comment->likes->count() }})</li>
+                            <li><a href="{{ route('post.show',['post_id' => $comment->post_id]) }}">{{ $comment->CommentPostuser['title'] }}</a>
+                                 [ {{ $comment->CommentPostuser['postUserName'] }} => {{ $comment->CommentPostuser['message'] }} ](いいね:{{ $comment->likes->count() }})</li>
                         @empty
                             <h5>まだコメントしていません</h5>
                         @endforelse
