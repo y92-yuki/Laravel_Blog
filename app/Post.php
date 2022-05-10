@@ -3,11 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use App\Services\Subtitle;
 
 class Post extends Model
 {
@@ -17,25 +15,48 @@ class Post extends Model
     protected $guarded = ['id'];
     protected $softCascade = ['comment'];
 
-    // https://readouble.com/laravel/8.x/ja/eloquent-mutators.html
-    public function getIndexTitleAttribute() {
-        return $this->id . '.' . Str::limit($this->title,10,'...') . '(' . $this->user->name . ')';
+    public function getIndexPostAttribute() {
+        //indexの投稿一覧に表示するデータ
+        $id = $this->id;
+        $title = $this->title;
+        $message = $this->message;
+        $userName = $this->user['name'];
+
+        //文字数省略表示のための加工
+        $modifiedTitle = Subtitle::getSubtitles($title,10);
+        $modifiedMessage = Subtitle::getSubtitles($message,20);
+
+        //viewでの中身を明示するためにキーを振る
+        $modifiedPosts = [
+            'id' => $id,
+            'title' => $modifiedTitle,
+            'message' => $modifiedMessage,
+            'userName' => $userName
+        ];
+
+        return $modifiedPosts;
     }
 
+    //ユーザーの投稿一覧
     public function getIdTitleAttribute() {
-        return $this->id . '.' .Str::limit($this->title,10,'...');
-    }
+        //マイページの投稿一覧に表示するデータ
+        $id = $this->id;
+        $title = $this->title;
 
-    // public function getPostIndex() {
-    // //     return $this->id . '.' . Str::limit($this->title,10,'...') . '(' . $this->user->name . ')';
-    // // }
+        //文字数省略表示のための加工
+        $modifiedTitle = Subtitle::getSubtitles($title,10);
+
+        //viewでの中身を明示するためにキーを振る
+        $modifiedPosts = [
+            'id' => $id,
+            'title' => $modifiedTitle
+        ];
+
+        return $modifiedPosts;
+    }
 
     public function postExistsLike() {
         return $this->users()->where('user_id',Auth::id())->exists();
-    }
-
-    public function getPostMessage() {
-        return Str::limit($this->message,20,'...');
     }
 
     public function user() {
@@ -54,11 +75,4 @@ class Post extends Model
         return $this->hasMany('App\Image');
     }
 
-    // public static function boot() {
-    //     parent::boot();
-
-    //     static::deleting(function ($post) {
-    //         $post->comment()->delete();
-    //     });
-    // }
 }

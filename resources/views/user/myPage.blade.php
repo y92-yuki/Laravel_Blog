@@ -34,7 +34,7 @@
                 <div class="card-text">
                     <ul>
                         @forelse ($user['posts'] as $post)
-                            <li><a href="{{ route('post.show',['post_id' => $post->id]) }}">{{ $post->IdTitle }}</a> (いいね:{{ $post->users->count() }})</li>
+                            <li>{{ $post->IdTitle['id'] }}.<a href="{{ route('post.show',['post_id' => $post->id]) }}">{{ $post->IdTitle['title'] }}</a> (いいね:{{ $post->users->count() }})</li>
                         @empty
                             <h5>まだ投稿がありません</h5>
                         @endforelse
