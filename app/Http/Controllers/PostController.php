@@ -14,27 +14,34 @@ use App\User;
 
 class PostController extends Controller
 {
+    //ログイン直後の投稿一覧表示
     public function index(Request $request) {
         $user = Auth::user();
-        $prefecturesNum = $user->prefecturesNum;
+        //ユーザーの居住地を取得
+        $prefecturesNum = $user->pref_id;
         $pref = User::$prefs[$prefecturesNum];
-        $prefOfficeLocation = User::$prefOfficeLocation[$prefecturesNum];
-        $param = ['pref' => $pref,'prefofficeLocation' => $prefOfficeLocation];
+        $prefofficeLocation = User::$prefOfficeLocation[$prefecturesNum];
+        $param = ['pref' => $pref,'prefofficeLocation' => $prefofficeLocation];
 
+        //検索されていなければ全投稿を取得
         if (empty($request->search_value)) {
             $posts = Post::orderBy('id','desc')->paginate(5);
             $param += ['posts' => $posts,'search' => false];
             return view('post.index',$param);
+
+        //検索窓で指定された値を取得
         } else {
-            $search = "%".$request->search_value."%";
-            $posts = Post::where('title','like',$search)->orWhere('message','like',$search)->orderBy('id','desc')->paginate(5);
+            $search = $request->search_value;
+            $posts = Post::where('title','like',"%{$search}%")->orWhere('message','like',"%{$search}%")->orderBy('id','desc')->paginate(5);
             $param += ['posts' => $posts,'search' => $search];
             return view('post.index',$param);
         }
     }
 
-    public function create(Request $request) {
-        return view('post.create',['user_id' => Auth::id()]);
+    //新規投稿画面
+    public function create() {
+        $user_id = Auth::id();
+        return view('post.create',compact('user_id'));
     }
 
     public function store(PostRequest $request) {

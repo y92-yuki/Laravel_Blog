@@ -8,7 +8,7 @@
                 <div class="card-header">地域を変更</div>
                 <div class="card-body">
                     <div class="col-md-6">
-                        <p>現在の地域：{{ $prefs[$user->prefNum] }}</p>
+                        <p>現在の地域：{{ $prefs[$user->pref_id] }}</p>
                     </div>
                     <form action="{{ route('edit.pref',$user) }}" method="post">
                         @csrf
@@ -23,7 +23,7 @@
                                 <select name="pref" class="form-control @error('pref') is-invalid @enderror">
                                     <option value="0">選択してください</option>
                                     @foreach($prefs as $key => $pref)
-                                        @if($prefs[$user->prefNum] == $pref)
+                                        @if($prefs[$user->pref_id] == $pref)
                                             @continue
                                         @else
                                             <option value="{{ $key }}" @if($key == old('pref')) selected @endif>{{ $pref }}</option>

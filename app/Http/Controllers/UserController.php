@@ -137,7 +137,7 @@ class UserController extends Controller
 
     public function updatePrefectures(ChangePrefectureRequest $request, User $user) {
         try {
-            $user->prefNum = $request->pref;
+            $user->pref_id = $request->pref;
             $user->save();
             
             session()->flash('success_message','地域の変更が完了しました');

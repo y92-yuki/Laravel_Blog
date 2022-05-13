@@ -17,7 +17,7 @@
             <div class="card-title text-center" style="font-size: 20px;"><h2 class="text-center">{{ $user->name }} さんのマイページ</h2></div>
             <div class="card-text">
                 <h4 class="my-3">メールアドレス: {{ $user->email }}</h4>
-                <h4 class="my-3">地域: {{ $prefs[$user->prefNum] }}</h4>
+                <h4 class="my-3">地域: {{ $prefs[$user->pref_id] }}</h4>
             </div>
             <ul>
                 <li><a href="{{ route('edit.password',$user) }}">パスワード変更</a></li>

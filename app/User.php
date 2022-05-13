@@ -16,7 +16,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'prefecturesNum', 'password',
+        'name', 'email', 'pref_id', 'password',
     ];
 
     /**
@@ -72,5 +72,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function postLikes() {
         return $this->belongsToMany('App\Post')->withTimestamps();
+    }
+
+    public function pref() {
+        return $this->belongsTo('App\Pref');
     }
 }
