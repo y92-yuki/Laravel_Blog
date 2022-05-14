@@ -12,7 +12,6 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(PostTableSeeder::class);
-        $this->call(PrefTableSeeder::class);
-        $this->call(PrefOfficeTableSeeder::class);
+        $this->call(PrefectureTableSeeder::class);
     }
 }

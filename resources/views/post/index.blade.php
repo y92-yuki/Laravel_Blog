@@ -23,7 +23,7 @@
     </form>
     <div class="weatherInfo">
         <input type="hidden" name="pref" value="{{ $pref }}">
-        <input type="hidden" name="prefofficeLocation" value="{{ $prefofficeLocation }}">
+        <input type="hidden" name="prefofficeLocation" value="{{ $prefOffice }}">
         <p class="weatherTime h5"></p>
         <img class="weatherIcon">
         <p class="description d-inline"></p>

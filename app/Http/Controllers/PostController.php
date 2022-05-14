@@ -10,7 +10,6 @@ use App\Image as Upload;
 use Illuminate\Support\Facades\Storage;
 use App\Services\RegisterImage;
 use Illuminate\Support\Facades\DB;
-use App\User;
 
 class PostController extends Controller
 {
@@ -18,10 +17,9 @@ class PostController extends Controller
     public function index(Request $request) {
         $user = Auth::user();
         //ユーザーの居住地を取得
-        $prefecturesNum = $user->pref_id;
-        $pref = User::$prefs[$prefecturesNum];
-        $prefofficeLocation = User::$prefOfficeLocation[$prefecturesNum];
-        $param = ['pref' => $pref,'prefofficeLocation' => $prefofficeLocation];
+        $pref = $user->prefInfo->pref;
+        $prefOffice = $user->prefInfo->prefOffice;
+        $param = ['pref' => $pref,'prefOffice' => $prefOffice];
 
         //検索されていなければ全投稿を取得
         if (empty($request->search_value)) {
@@ -40,7 +38,7 @@ class PostController extends Controller
 
     //新規投稿画面
     public function create() {
-        $user_id = Auth::id();
+        $user_id = Auth::id();        
         return view('post.create',compact('user_id'));
     }
 

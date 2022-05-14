@@ -15,14 +15,14 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Mail;
 use App\Http\Requests\ChangePrefectureRequest;
+use App\Prefecture;
 
 class UserController extends Controller
 {
     //ユーザーのマイページ
     public function info(Request $request) {
-        $user = Arr::except(User::with(['posts','comment','postLikes','comments'])->find(Auth::id()),'password');
-        $prefs = User::$prefs;
-        return view('user.myPage',compact('user','prefs'));
+        $user = Arr::except(User::with(['posts','comment','postLikes','comments','prefInfo'])->find(Auth::id()),'password');
+        return view('user.myPage',compact('user'));
     }
 
     //ログイン中のパスワード変更画面
@@ -126,7 +126,7 @@ class UserController extends Controller
     }
 
     public function editPrefectures(User $user) {
-        $prefs = User::$prefs;
+        $prefs = Prefecture::all();
 
         if ($user->id == Auth::id()) {
             return view('user.editPrefectures',compact('prefs','user'));
@@ -137,7 +137,7 @@ class UserController extends Controller
 
     public function updatePrefectures(ChangePrefectureRequest $request, User $user) {
         try {
-            $user->pref_id = $request->pref;
+            $user->prefecture_id = $request->pref;
             $user->save();
             
             session()->flash('success_message','地域の変更が完了しました');
