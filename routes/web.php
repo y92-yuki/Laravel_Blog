@@ -78,7 +78,7 @@ Route::prefix('mypage')->group(function() {
 
     //パスワード変更
     Route::get('/{user}/editpassword','UserController@editPassword')->name('edit.password')->middleware('auth');
-    Route::post('/{user}/editpassword','UserController@updatePassword')->name('edit.password');
+    Route::post('/{user}/sendpasswordlink','UserController@sendChangePasswordLink')->name('send.password');
 
     //メールアドレス変更
     Route::get('/{user}/editemail','UserController@editEmail')->name('edit.email')->middleware('auth');
@@ -90,8 +90,14 @@ Route::prefix('mypage')->group(function() {
 
 });
 
+Route::prefix('reset')->group(function() {
+//メールアドレスリセットのトークン確認
+Route::get('email/{token}','UserController@updateEmail');
+
 //パスワードリセットのトークン確認
-Route::get('reset/{token}','UserController@reset');
+Route::get('password/{token}','UserController@updatePassword');
+
+});
 
 //APIデータを取得
 Route::post('getForeCast','ForecastApiController@getForeCastApi');

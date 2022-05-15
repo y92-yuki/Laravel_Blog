@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header">パスワードを変更</div>
                 <div class="card-body">
-                        <form action="{{ route('edit.password',$user) }}" method="post">
+                        <form action="{{ route('send.password',$user) }}" method="post">
                             @csrf
                             <div class="col-md-6">
                                 <span class="h5">現在のパスワード</span>
