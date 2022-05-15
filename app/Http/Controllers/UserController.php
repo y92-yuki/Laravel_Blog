@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Mail\SendEmailReset;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use App\Services\TokenCreate;
 use Illuminate\Support\Facades\DB;
 use Mail;
 use App\Http\Requests\ChangePrefectureRequest;
@@ -63,7 +63,8 @@ class UserController extends Controller
         $new_email = $request->new_email;
 
         //メール認証用のトークンを生成
-        $token = md5(Str::random(40) . $new_email);
+        $tokenCreate = new TokenCreate(40,$new_email);
+        $token = $tokenCreate->getToken();
         
         //有効期限を生成
         $expired = new Carbon('+60 minutes');
