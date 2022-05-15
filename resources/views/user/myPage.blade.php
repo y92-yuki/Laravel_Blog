@@ -4,16 +4,6 @@
 <div class="container">
     <div class="card">
         <div class="card-body">
-            @if (session()->has('success_message'))
-                <div class="alert alert-success text-center">
-                    {{ session('success_message') }}
-                </div>
-            @endif
-            @if (session()->has('error_message'))
-                <div class="alert alert-danger text-center">
-                    {{ session('error_message') }}
-                </div>
-            @endif
             <div class="card-title text-center" style="font-size: 20px;"><h2 class="text-center">{{ $user->name }} さんのマイページ</h2></div>
             <div class="card-text">
                 <h4 class="my-3">メールアドレス: {{ $user->email }}</h4>

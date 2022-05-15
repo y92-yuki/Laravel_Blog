@@ -1,17 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-@if (session()->has('success_message'))
-        <div class="alert alert-success text-center">
-            {{ session('success_message') }}
-        </div>
-@endif
-@if (session()->has('error_message'))
-        <div class="alert alert-danger text-center">
-            {{ session('error_message') }}
-        </div>
-@endif
-
 <div class="container">
     <form action="/post" method="get" class="float-right">
         <div class="form-inline">
