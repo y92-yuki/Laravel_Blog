@@ -18,6 +18,7 @@ class CreateEmailResetTable extends Migration
             $table->integer('user_id')->comment('メールアドレスを更新するユーザーのID');
             $table->string('new_email')->comment('ユーザーが新規に設定したメールアドレス');
             $table->string('token');
+            $table->timestamp('expired_at');
             $table->timestamps();
         });
     }

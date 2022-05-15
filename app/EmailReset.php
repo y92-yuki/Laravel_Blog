@@ -2,12 +2,8 @@
 
 namespace App;
 
-use App\Mail\SendEmailReset;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
-use App\Notifications\ChangeEmail;
 use Carbon\Carbon;
-use Mail;
 
 class EmailReset extends Model
 {
@@ -17,7 +13,8 @@ class EmailReset extends Model
     protected $fillable = [
         'user_id',
         'new_email',
-        'token'
+        'token',
+        'expired_at'
     ];
 
     public function checkExpired($created_at) {

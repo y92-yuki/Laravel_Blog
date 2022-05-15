@@ -38,7 +38,7 @@ class PostController extends Controller
 
     //新規投稿画面
     public function create() {
-        $user_id = Auth::id();        
+        $user_id = Auth::id();
         return view('post.create',compact('user_id'));
     }
 

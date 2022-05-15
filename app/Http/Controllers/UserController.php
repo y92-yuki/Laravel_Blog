@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\User;
 use App\EmailReset;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Arr;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Mail\SendEmailReset;
 use Illuminate\Support\Facades\Hash;
@@ -16,12 +15,13 @@ use Illuminate\Support\Facades\DB;
 use Mail;
 use App\Http\Requests\ChangePrefectureRequest;
 use App\Prefecture;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
     //ユーザーのマイページ
     public function info(Request $request) {
-        $user = Arr::except(User::with(['posts','comment','postLikes','comments','prefInfo'])->find(Auth::id()),'password');
+        $user = User::with(['posts','comment','postLikes','comments','prefInfo'])->find(Auth::id());
         return view('user.myPage',compact('user'));
     }
 
@@ -64,6 +64,9 @@ class UserController extends Controller
 
         //メール認証用のトークンを生成
         $token = md5(Str::random(40) . $new_email);
+        
+        //有効期限を生成
+        $expired = new Carbon('+60 minutes');
 
         //トークンと変更後のemailをDBに保存して、確認メールを送信
        try {
@@ -73,6 +76,7 @@ class UserController extends Controller
                'user_id' => Auth::id(),
                'new_email' => $new_email,
                'token' => $token,
+               'expired_at' => $expired
            ];
 
            $email_reset = new EmailReset();
@@ -91,10 +95,11 @@ class UserController extends Controller
        return redirect(route('myPage'));
     }
 
-    public function reset(Request $request ,$token) {
-        $email_reset = EmailReset::where('token',$token)->first();
+    public function reset($token) {
+        //有効期限内で発行したトークンと一致するデータを検索
+        $email_reset = EmailReset::where('token',$token)->where('expired_at', '>', Carbon::now())->first();
 
-        if ($email_reset && !$email_reset->checkExpired($email_reset->created_at)) {
+        if ($email_reset) {
             try {
                 DB::beginTransaction();
 
@@ -113,15 +118,8 @@ class UserController extends Controller
                 session()->flash('error_message','メールアドレスの変更に失敗しました');
             }
         } else {
-            if ($email_reset) {
-                $email_reset->delete();
-
-                session()->flash('error_message','アクセスしたURLは無効です');
-            }
-
             session()->flash('error_message','アクセスしたURLは無効です');
         }
-
         return redirect(route('myPage'));
     }
 
