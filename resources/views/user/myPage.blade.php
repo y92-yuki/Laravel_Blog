@@ -45,10 +45,10 @@
 
         <div class="card">
             <div class="card-body">
-                <div class="card-title"><h4 class="text-center">コメントした投稿一覧({{ $user['comment']->count() }})</h4></div>
+                <div class="card-title"><h4 class="text-center">コメントした投稿一覧({{ $user->comments->count() }})</h4></div>
                 <div class="card-text">
                     <ul>
-                        @forelse ($user->comment as $comment)
+                        @forelse ($user->comments as $comment)
                             <li><a href="{{ route('post.show',['post_id' => $comment->post_id]) }}">{{ $comment->CommentPostuser['title'] }}</a>
                                  [ {{ $comment->CommentPostuser['postUserName'] }} => {{ $comment->CommentPostuser['message'] }} ](いいね:{{ $comment->likes->count() }})</li>
                         @empty
@@ -79,7 +79,7 @@
                 <div class="card-title"><h4 class="text-center">いいねしたコメント一覧</h4></div>
                 <div class="card-text">
                     <ul>
-                        @forelse ($user->comments as $commentLikes)
+                        @forelse ($user->commentLikes as $commentLikes)
                             <li><a href="{{ route('post.show',['post_id' => $commentLikes->post_id]) }}">{{ $commentLikes->message }}</a></li>
                         @empty
                             <h5>まだコメントへいいねしていません</h5>

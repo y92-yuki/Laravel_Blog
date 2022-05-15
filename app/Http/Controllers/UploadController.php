@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Image as Upload;
 use Illuminate\Support\Facades\Auth;
-use Image;
 use App\Post;
 use Illuminate\Support\Facades\Storage;
 use App\Services\RegisterImage;
@@ -14,23 +13,31 @@ use Illuminate\Support\Facades\DB;
 class UploadController extends Controller
 {
     public function store(Request $request) {    
-    
-        //ファイルを選択せずにアップロードボタンを選択した場合は元の投稿詳細画面へリダイレクト
-
         $post_id = $request->post_id;
 
         try {
             DB::beginTransaction();
 
+            //ファイルを選択せずにアップロードボタンを選択した場合は元の投稿詳細画面へリダイレクト
             if ($request->file) {
-                $path = time() . '_' . mt_rand() . '_' . $request->file->getClientOriginalName();
-                $save_path = storage_path('app/public/' . Auth::id() . '/' . $path);
+                $file_name = $request->file->getClientOriginalName();
+                
+                //画像を保存するためのパスを作成
+                $registerImage = new RegisterImage($file_name, Auth::id());
+
+                //画像を保存するためのフォルダが存在するか判定
                 if (!Storage::disk('public')->exists(Auth::id())) {
                     Storage::disk('public')->makeDirectory(Auth::id());
                 }
-                Upload::create(['post_id' => $post_id, 'user_id' => Auth::id(), 'path' => $path]);
 
-                RegisterImage::resizeRegisterImage($request->file, 600, $save_path);
+                //カラムに画像の情報を保存
+                Upload::create([
+                    'post_id' => $post_id,
+                    'user_id' => Auth::id(),
+                    'path' => $registerImage->getPath()
+                ]);
+                //画像をフォルダに保存
+                $registerImage->resizeRegisterImage($request->file, 600);
 
                 session()->flash('success_message','画像の添付が完了しました');
 

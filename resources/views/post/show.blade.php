@@ -111,7 +111,7 @@
                 <button type="submit"class="btn btn-primary mb-5">コメントする</button>
             </form>
         
-            @forelse ($post->comment as $comment)
+            @forelse ($post->comments as $comment)
                 <div class="card my-2" style="width: 18rem">
                     <div class="card-body">
                         <h6 class="card-title">
