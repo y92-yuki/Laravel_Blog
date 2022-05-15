@@ -47,26 +47,31 @@ class PostController extends Controller
         try {
             DB::beginTransaction();
 
+            //投稿を保存
             $post = new Post;
             $post_data = $request->except(['_token']);
             $post->fill($post_data)->save();
             
+            //投稿に画像が存在するか判定
             if ($request->file) {
+                $file_name = $request->file->getClientOriginalName();
+                //画像を保存するためのパスを作成
+                $registerimage = new RegisterImage($file_name, Auth::id());
 
-                $path = time() . '_' . mt_rand() . '_' . $request->file->getClientOriginalName();
-                $save_path = storage_path('app/public/' . Auth::id() . '/' . $path);
-
+                //画像を保存するためのフォルダが存在するか判定
                 if (!Storage::disk('public')->exists(Auth::id())) {
                     Storage::disk('public')->makeDirectory(Auth::id());
                 }
 
+                //カラムに画像の情報を保存
                 Upload::create([
                     'post_id' => $post->id, 
                     'user_id' => Auth::id(), 
-                    'path' => $path
+                    'path' => $registerimage->getPath()
                 ]);
 
-                RegisterImage::resizeRegisterImage($request->file, 600, $save_path);
+                //画像をフォルダに保存
+                $registerimage->resizeRegisterImage($request->file, 600);
             }
             session()->flash('success_message','投稿が完了しました');
             DB::commit();
@@ -78,11 +83,13 @@ class PostController extends Controller
         return redirect('/post');
     }
 
+    //投稿詳細画面
     public function show(Request $request) {
         $post = Post::find($request->post_id);
         return view('post.show',compact('post'));
     }
 
+    //投稿編集画面
     public function edit(Post $post) {
         if ($post->user_id == Auth::id()) {
             return view('post.edit',['post' => $post]);
@@ -91,6 +98,7 @@ class PostController extends Controller
         }
     }
 
+    //投稿編集処理
     public function update(PostRequest $request) {
         try {
             $post = Post::find($request->id);
@@ -105,7 +113,7 @@ class PostController extends Controller
         return redirect('/post');
     }
 
-
+    //投稿削除画面
     public function deleteConfirm(Post $post) {
         if ($post->user_id == Auth::id()) {
             return view('post.deleteConfirm',['post' => $post]);
@@ -114,24 +122,27 @@ class PostController extends Controller
         }
     }
 
-
+    //投稿削除処理
     public function delete(Request $request) {
-        $post = Post::with('comment')->find($request->id);
-        $images = $post->images;
+        //削除する投稿とリレーションされているコメントと画像を取得
+        $post = Post::with(['comment','images'])->find($request->id);
 
         try {
             DB::beginTransaction();
-
-            foreach ($post['comment'] as $comment) {
+            //投稿に対するコメントのいいねを削除
+            foreach ($post->comments as $comment) {
                 $comment->likes()->detach();
             }
+            //投稿に対するいいねを削除
             $post->users()->detach();
 
-            foreach ($images as $image) {
+            //投稿の画像を削除
+            foreach ($post->images as $image) {
                 $remove_image = $post->user_id . '/' . $image->path;
                 $image->delete();
                 Storage::disk('public')->delete($remove_image);
             }
+            //投稿の画像パスを削除
             $post->delete();
 
             session()->flash('success_message','投稿の削除が完了しました');

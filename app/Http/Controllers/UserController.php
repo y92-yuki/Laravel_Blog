@@ -21,7 +21,7 @@ class UserController extends Controller
 {
     //ユーザーのマイページ
     public function info(Request $request) {
-        $user = User::with(['posts','comment','postLikes','comments','prefInfo'])->find(Auth::id());
+        $user = User::with(['posts','comments','postLikes','commentLikes','prefInfo'])->find(Auth::id());
         return view('user.myPage',compact('user'));
     }
 
