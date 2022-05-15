@@ -16,9 +16,4 @@ class EmailReset extends Model
         'token',
         'expired_at'
     ];
-
-    public function checkExpired($created_at) {
-        $expired = new Carbon($created_at);
-        return $expired->addHour(1)->isPast();
-    }
 }
