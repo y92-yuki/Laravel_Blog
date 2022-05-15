@@ -3,16 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 
-class EmailReset extends Model
+class Reset extends Model
 {
-
-    protected $table = 'email_reset';
-
     protected $fillable = [
         'user_id',
-        'new_email',
+        'new_value',
         'token',
         'expired_at'
     ];
