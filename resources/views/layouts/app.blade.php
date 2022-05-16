@@ -86,5 +86,6 @@
             @yield('content')
         </main>
     </div>
+    <script src="{{ mix('js/flashMessageControl.js') }}"></script>
 </body>
 </html>

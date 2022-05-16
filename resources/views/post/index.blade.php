@@ -59,5 +59,4 @@
 </div>
 @endsection
 
-<script src="{{ mix('js/flashMessageControl.js') }}"></script>
 <script src="{{ mix('js/ForeCastApi.js') }}"></script>

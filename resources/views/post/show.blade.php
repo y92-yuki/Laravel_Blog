@@ -128,4 +128,3 @@
 
 <script src="{{ mix('js/like.js') }}"></script>
 <script src="{{ mix('js/comment.js') }}"></script>
-<script src="{{ mix('js/flashMessageControl.js') }}"></script>
