@@ -90,43 +90,17 @@
 /*!*********************************************!*\
   !*** ./resources/js/flashMessageControl.js ***!
   \*********************************************/
-/*! exports provided: successMessage */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "successMessage", function() { return successMessage; });
 
 
 window.addEventListener('DOMContentLoaded', function () {
   setTimeout(function () {
     $('.alert-success, .alert-danger').fadeOut(5000);
-  }, 2000); // const successMessage = () => {
-  //     $('.alert-success').fadeIn();
-  //     setTimeout(() => {
-  //         $('.alert-success').fadeOut(5000);
-  //     },2000);
-  // }
-  // export function successMessage() {
-  //     $('.alert-success').fadeIn();
-  //     setTimeout(() => {
-  //         $('.alert-success').fadeOut(5000);
-  //     },2000);
-  // }
-
-  var dangerMessage = function dangerMessage() {
-    $('.alert-danger').fadeIn();
-    setTimeout(function () {
-      $('.alert-danger').fadeOut(5000);
-    }, 2000);
-  };
-});
-var successMessage = function successMessage() {
-  $('.alert-success').fadeIn();
-  setTimeout(function () {
-    $('.alert-success').fadeOut(5000);
   }, 2000);
-};
+});
 
 /***/ }),
 

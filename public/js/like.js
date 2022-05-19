@@ -97,8 +97,44 @@
 
 
 window.addEventListener('DOMContentLoaded', function () {
-  //投稿へのいいね機能
-  //resourcess->views->layouts->app.blade.phpのcsrf-tokenを取得
+  //いいね取り消し機能
+  var unLikeExecute = function unLikeExecute(url, id, unLike, like, likeCount) {
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "X-CSRF-TOKEN": token,
+        "Content-type": "application/json"
+      },
+      body: JSON.stringify(id)
+    }).then(function () {
+      likeCount.textContent = String(parseInt(likeCount.textContent) - 1);
+      unLike.classList.toggle('d-none');
+      like.classList.toggle('d-none');
+    })["catch"](function (e) {
+      return console.log(e);
+    });
+  }; //良いね機能
+
+
+  var likeExecute = function likeExecute(url, id, like, unLike, likeCount) {
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "X-CSRF-TOKEN": token,
+        "Content-type": "application/json"
+      },
+      body: JSON.stringify(id)
+    }).then(function () {
+      likeCount.textContent = String(parseInt(likeCount.textContent) + 1);
+      like.classList.toggle('d-none');
+      unLike.classList.toggle('d-none');
+    })["catch"](function (e) {
+      return console.log(e);
+    });
+  }; //投稿へのいいね機能
+  //resourcess/views/layouts/app.blade.phpのcsrf-tokenを取得
+
+
   var token = document.querySelector('meta[name=csrf-token]').content; //ログイン中のユーザーがいいねをしているか判定(戻り値:0 or 1)
 
   var postExistsLike = document.querySelector('input[name=postExistsLike]').value; //投稿へのいいね数の要素を取得
@@ -114,141 +150,60 @@ window.addEventListener('DOMContentLoaded', function () {
   }
 
   postLike.forEach(function (item) {
+    //いいね・取消ボタンのどちらかがクリックされたら処理開始
     item.onclick = function (e) {
-      var event = e.currentTarget;
+      var event = e.currentTarget; //POSTで送信する値(いいね・取消共通)
+
       var post_id = {
         post_id: event.value
-      };
+      }; //クリックされた要素がpostUnLikeクラスを持っていたら取消ボタン
 
       if (event.parentNode.classList.contains('postUnlike')) {
-        fetch("/post/postUnlike", {
-          method: "POST",
-          headers: {
-            "X-CSRF-TOKEN": token,
-            "Content-type": "application/json"
-          },
-          body: JSON.stringify(post_id)
-        }).then(function () {
-          postLikeCount.textContent = String(parseInt(postLikeCount.textContent) - 1);
-          event.parentNode.classList.toggle('d-none');
-          document.querySelector('.postLike').classList.toggle('d-none');
-        })["catch"](function (e) {
-          return console.log(e);
-        });
+        var url = '/post/postUnlike';
+        var unLike = event.parentNode;
+        var like = document.querySelector('.postLike'); //いいね取消を実行
+
+        unLikeExecute(url, post_id, unLike, like, postLikeCount);
       } else {
-        fetch('/post/postLike', {
-          method: "POST",
-          headers: {
-            "X-CSRF-TOKEN": token,
-            "Content-type": "application/json"
-          },
-          body: JSON.stringify(post_id)
-        }).then(function () {
-          postLikeCount.textContent = String(parseInt(postLikeCount.textContent) + 1);
-          event.parentNode.classList.toggle('d-none');
-          document.querySelector('.postUnlike').classList.toggle('d-none');
-        })["catch"](function (e) {
-          return console.log(e);
-        });
+        var _url = '/post/postLike';
+        var _like = event.parentNode;
+
+        var _unLike = document.querySelector('.postUnlike'); //いいねを実行
+
+
+        likeExecute(_url, post_id, _like, _unLike, postLikeCount);
       }
 
       ;
     };
   }); //コメントへのいいね機能
-  //投稿にコメントがあるか判定(戻り値:要素 or null)
+  //ログイン中のユーザーがコメントへいいねしているか
 
-  var commentNone = document.querySelector('input[name=commentNone]'); //ログイン中のユーザーがコメントへいいねしているか判定
+  var commentExistsLike = document.querySelectorAll('.commentExistsLike'); //いいね・取消ボタンのクリックイベントを取得
 
-  var commentExistsLike = document.querySelectorAll('.commentExistsLike'); //投稿詳細へアクセス時にいいね・取消ボタンの表示を操作
-
-  commentExistsLike.forEach(function (item) {
-    if (item.value) {
-      item.nextElementSibling.nextElementSibling.classList.add('d-none');
-    } else {
-      item.nextElementSibling.classList.add('d-none');
-    }
-  });
   $(document).on('click', '.commentLike-toggle', function (e) {
     var event = e.currentTarget;
     var comment_id = {
       comment_id: event.value
     };
+    var commentLikeCount = event.parentNode.lastElementChild.firstElementChild; //クリックされた要素がcommentUnlikeクラスを持っていたら取消ボタン
 
     if (event.classList.contains('commentUnlike')) {
-      fetch('/post/comment/unlike', {
-        method: 'POST',
-        headers: {
-          "X-CSRF-TOKEN": token,
-          "content-type": "application/json"
-        },
-        body: JSON.stringify(comment_id)
-      }).then(function () {
-        //コメントのいいね数を取得->更新
-        event.parentNode.lastElementChild.firstElementChild.textContent = String(parseInt(event.parentNode.lastElementChild.firstElementChild.textContent) - 1);
-        event.nextElementSibling.classList.toggle('d-none');
-        event.classList.toggle('d-none');
-      })["catch"](function (e) {
-        return console.log(e);
-      });
+      var url = '/post/comment/unlike';
+      var unLike = event;
+      var like = event.nextElementSibling; //いいね取消を実行
+
+      unLikeExecute(url, comment_id, unLike, like, commentLikeCount);
     } else {
-      fetch('/post/comment/like', {
-        method: 'POST',
-        headers: {
-          "X-CSRF-TOKEN": token,
-          "content-type": "application/json"
-        },
-        body: JSON.stringify(comment_id)
-      }).then(function () {
-        //コメントのいいね数を取得->更新
-        event.parentNode.lastElementChild.firstElementChild.textContent = String(parseInt(event.parentNode.lastElementChild.firstElementChild.textContent) + 1);
-        event.previousElementSibling.classList.toggle('d-none');
-        event.classList.toggle('d-none');
-      })["catch"](function (e) {
-        return console.log(e);
-      });
+      var _url2 = '/post/comment/like';
+      var _like2 = event;
+      var _unLike2 = event.previousElementSibling; //いいねを実行
+
+      likeExecute(_url2, comment_id, _like2, _unLike2, commentLikeCount);
     }
 
     ;
-  }); // };
-  // commentLike.forEach((item) => {
-  //     item.onclick = (e) => {
-  //         const event = e.currentTarget;
-  //         const comment_id = {comment_id: event.value};
-  //         if (event.classList.contains('commentUnlike')) {
-  //             fetch('/post/comment/unlike',{
-  //                 method: 'POST',
-  //                 headers: {
-  //                     "X-CSRF-TOKEN": token,
-  //                     "content-type": "application/json"
-  //                 },
-  //                 body: JSON.stringify(comment_id)
-  //             })
-  //             .then(() => {
-  //                 //コメントのいいね数を取得->更新
-  //                 event.parentNode.lastElementChild.firstElementChild.textContent = String(parseInt(event.parentNode.lastElementChild.firstElementChild.textContent) - 1);
-  //                 event.nextElementSibling.classList.toggle('d-none');
-  //                 event.classList.toggle('d-none');
-  //             })
-  //             .catch(e => console.log(e));
-  //         } else {
-  //             fetch ('/post/comment/like',{
-  //                 method: 'POST',
-  //                 headers: {
-  //                     "X-CSRF-TOKEN": token,
-  //                     "content-type": "application/json"
-  //                 },
-  //                 body: JSON.stringify(comment_id)
-  //             })
-  //             .then(() => {
-  //                 //コメントのいいね数を取得->更新
-  //                 event.parentNode.lastElementChild.firstElementChild.textContent = String(parseInt(event.parentNode.lastElementChild.firstElementChild.textContent) + 1);
-  //                 event.previousElementSibling.classList.toggle('d-none');
-  //                 event.classList.toggle('d-none');
-  //             })
-  //             .catch(e => console.log(e));
-  //         };
-  //     };
-  // });
+  });
 });
 
 /***/ }),

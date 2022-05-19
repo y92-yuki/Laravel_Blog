@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use App\Services\Subtitle;
 
 class Comment extends Model
@@ -13,7 +12,7 @@ class Comment extends Model
     use SoftDeletes;
 
     protected $guarded = ['id'];
-    protected $appends = ['commentexists_like'];
+    protected $appends = ['is_like_by_login_user'];
 
 
     //ユーザーがしたコメント一覧をマイページに表示
@@ -34,7 +33,7 @@ class Comment extends Model
     }
 
     //投稿にいいね済みか判定
-    public function getCommentexistsLikeAttribute() {
+    public function getIsLikeByLoginUserAttribute() {
         return $this->likes()->where('user_id',Auth::id())->exists();
     }
     

@@ -40,6 +40,9 @@ Route::prefix('post')->group(function() {
     //コメント投稿
     Route::post('/show','CommentController@addComment');
 
+    //コメントを取得
+    Route::get('/show/getcomment/{post_id}','CommentController@getComment');
+
     //投稿編集画面
     Route::get('/edit/{post}','PostController@edit')->name('post.edit')->middleware('auth');
     Route::post('/edit','PostController@update');
