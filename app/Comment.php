@@ -13,6 +13,8 @@ class Comment extends Model
     use SoftDeletes;
 
     protected $guarded = ['id'];
+    protected $appends = ['commentexists_like'];
+
 
     //ユーザーがしたコメント一覧をマイページに表示
     public function getCommentPostuserAttribute() {
@@ -32,7 +34,7 @@ class Comment extends Model
     }
 
     //投稿にいいね済みか判定
-    public function existsLike() {
+    public function getCommentexistsLikeAttribute() {
         return $this->likes()->where('user_id',Auth::id())->exists();
     }
     
