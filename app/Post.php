@@ -20,7 +20,7 @@ class Post extends Model
         $id = $this->id;
         $title = $this->title;
         $message = $this->message;
-        $userName = $this->user['name'];
+        $userName = $this->user->name;
 
         //文字数省略表示のための加工
         $modifiedTitle = Subtitle::getSubtitles($title,10);

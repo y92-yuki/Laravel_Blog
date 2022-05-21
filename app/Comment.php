@@ -18,10 +18,11 @@ class Comment extends Model
     //ユーザーがしたコメント一覧をマイページに表示
     public function getCommentPostuserAttribute() {
         //マイページの「コメントした投稿一覧」に表示するデータ
-        $comments = [$this->post['title'],$this->post->user['name'],$this['message']];
+        $comments = [$this->post->title,$this->post->user->name,$this->message];
         
         //文字数省略表示のための加工
         $modifiedComments = Subtitle::getSubtitles($comments,10);
+        
         //viewでの中身を明示するためにキーを振る
         $modifiedComments = [
             'title' => $modifiedComments[0],
