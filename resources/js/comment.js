@@ -53,6 +53,15 @@ const comment = (userName,timed,message,comment_id,commentExistsLike,likeNum) =>
     `)
 }
 
+//バリデーションメッセージの挿入
+const addValidateMessage = (message,messageType,messagePosition) => {
+    const validateMessage = document.createElement('p');
+    validateMessage.textContent = message;
+    validateMessage.classList.add('text-danger','validateMessage',messageType);
+    messagePosition.before(validateMessage);
+    messagePosition.classList.add('is-invalid');
+}
+
 window.addEventListener('DOMContentLoaded',() => {
     const post_id = document.querySelector('input[name=post_id]');
 
@@ -84,7 +93,15 @@ window.addEventListener('DOMContentLoaded',() => {
         formData.delete('_token');
         const message = document.querySelector('textarea[name=message]');
 
-        if (message.value && message.value.length <= 20) {
+        if (!message.value) {
+            if (!document.querySelector('.blankMessage')) {
+                addValidateMessage('*コメントを入力してください','blankMessage',message);
+            }
+        } else if (message.value.length >= 20) {
+            if (!document.querySelector('.max20Message')) {
+                addValidateMessage('*コメントは20文字以内で入力してください','max20Message',message);
+            }
+        } else {
             fetch('/post/show',{
                 method: 'POST',
                 headers: {
@@ -110,22 +127,6 @@ window.addEventListener('DOMContentLoaded',() => {
                 console.log(e);
                 dangerMessage();
             });
-        } else if (!message.value) {
-            if (!document.querySelector('.blankMessage')) {
-                const validateMessage = document.createElement('p');
-                validateMessage.textContent = '*コメントを入力してください';
-                validateMessage.classList.add('text-danger','blankMessage','validateMessage');
-                message.before(validateMessage);
-                message.classList.add('is-invalid');
-            }
-        } else {
-            if (!document.querySelector('.max20Message')) {
-                const validateMessage = document.createElement('p');
-                validateMessage.textContent = '*コメントは20文字以内で入力してください';
-                validateMessage.classList.add('text-danger','max20Message','validateMessage');
-                message.before(validateMessage);
-                message.classList.add('is-invalid');
-            }
         }
     }
 });

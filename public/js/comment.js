@@ -137,6 +137,15 @@ var getCreated_at = function getCreated_at(created_at) {
 
 var comment = function comment(userName, timed, message, comment_id, commentExistsLike, likeNum) {
   document.querySelector('.viewComments').insertAdjacentHTML('afterbegin', "\n        <div class=\"card my-2\" style=\"width: 18rem\">\n            <div class=\"card-body\">\n                <h6 class=\"card-title\">\n                    ".concat(userName, "(").concat(timed, ")\n                    <input type=\"hidden\" class=\"commentExistsLike\" value=\"").concat(commentExistsLike, "\">\n                    <button type=\"button\" id=\"commentUnlike\" class=\"float-right btn btn-success btn-sm commentLike-toggle commentUnlike\" value=\"").concat(comment_id, "\">\u53D6\u6D88</button>\n                    <button type=\"button\" class=\"float-right btn btn-primary btn-sm commentLike-toggle commentLike\" value=\"").concat(comment_id, "\"><i class=\"fa-regular fas fa-thumbs-up\"> \u3044\u3044\u306D\uFF01</i></button>\n                    <p>\u3044\u3044\u306D\u306E\u6570:<span class=\"commentLikeCount\">").concat(likeNum, "</span></p>\n                </h6>\n                <p class=\"card-text\">\n                    ").concat(message, "\n                    <a href=\"/post/show/delete/").concat(comment_id, "\" class=\"mt-1 float-right btn btn-sm btn-danger\">\u524A\u9664</a>\n                </p>\n            </div>\n        </div>\n    "));
+}; //バリデーションメッセージの挿入
+
+
+var addValidateMessage = function addValidateMessage(message, messageType, messagePosition) {
+  var validateMessage = document.createElement('p');
+  validateMessage.textContent = message;
+  validateMessage.classList.add('text-danger', 'validateMessage', messageType);
+  messagePosition.before(validateMessage);
+  messagePosition.classList.add('is-invalid');
 };
 
 window.addEventListener('DOMContentLoaded', function () {
@@ -190,7 +199,15 @@ window.addEventListener('DOMContentLoaded', function () {
     formData["delete"]('_token');
     var message = document.querySelector('textarea[name=message]');
 
-    if (message.value && message.value.length <= 20) {
+    if (!message.value) {
+      if (!document.querySelector('.blankMessage')) {
+        addValidateMessage('*コメントを入力してください', 'blankMessage', message);
+      }
+    } else if (message.value.length >= 20) {
+      if (!document.querySelector('.max20Message')) {
+        addValidateMessage('*コメントは20文字以内で入力してください', 'max20Message', message);
+      }
+    } else {
       fetch('/post/show', {
         method: 'POST',
         headers: {
@@ -214,25 +231,6 @@ window.addEventListener('DOMContentLoaded', function () {
         console.log(e);
         dangerMessage();
       });
-    } else if (!message.value) {
-      if (!document.querySelector('.blankMessage')) {
-        var validateMessage = document.createElement('p');
-        validateMessage.textContent = '*コメントを入力してください';
-        validateMessage.classList.add('text-danger', 'blankMessage', 'validateMessage');
-        message.before(validateMessage);
-        message.classList.add('is-invalid');
-      }
-    } else {
-      if (!document.querySelector('.max20Message')) {
-        var _validateMessage = document.createElement('p');
-
-        _validateMessage.textContent = '*コメントは20文字以内で入力してください';
-
-        _validateMessage.classList.add('text-danger', 'max20Message', 'validateMessage');
-
-        message.before(_validateMessage);
-        message.classList.add('is-invalid');
-      }
     }
   };
 });
