@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Post;
+use App\Comment;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PostRequest;
 use App\Image as Upload;
@@ -85,8 +86,13 @@ class PostController extends Controller
 
     //投稿詳細画面
     public function show(Request $request) {
-        $post = Post::find($request->post_id);
-        return view('post.show',compact('post'));
+
+        //投稿を取得
+        $post = Post::with(['user','images'])->find($request->post_id);
+
+        //投稿に対するコメントを取得
+        $comments = Comment::with(['user','likes'])->where('post_id',$request->post_id)->orderBy('created_at','desc')->get()->toArray();
+        return view('post.show',compact('post','comments'));
     }
 
     //投稿編集画面

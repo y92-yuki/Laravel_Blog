@@ -17,7 +17,7 @@
                 unLike.classList.toggle('d-none');
                 like.classList.toggle('d-none');
             })
-            .catch(e => console.log(e));
+            .catch(e => console.error(e));
         }
 
         //良いね機能
@@ -35,7 +35,7 @@
              like.classList.toggle('d-none');
              unLike.classList.toggle('d-none');
             })
-            .catch(e => console.log(e));
+            .catch(e => console.error(e));
         }
 
         //投稿へのいいね機能
@@ -90,8 +90,15 @@
 
         //コメントへのいいね機能
 
-        //ログイン中のユーザーがコメントへいいねしているか
-        const commentExistsLike = document.querySelectorAll('.commentExistsLike');
+        // ログイン中のユーザーがコメントへいいねしているか
+        const liked = document.querySelectorAll('.commentExistsLike');
+        for (let p of liked) {
+            if (p.value) {
+                p.nextElementSibling.nextElementSibling.classList.add('d-none')
+            } else {
+                p.nextElementSibling.classList.add('d-none');
+            }
+        }
 
         //いいね・取消ボタンのクリックイベントを取得
         $(document).on('click','.commentLike-toggle',(e) => {

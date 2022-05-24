@@ -17,14 +17,7 @@ class CommentController extends Controller
             $form = $request->all();
             $comment->fill($form)->save();
 
-            $data = [
-                'userName' => $comment->user->name,
-                'message' => $comment->message,
-                'created_at' => $comment->created_at,
-                'commentId' => $comment->id
-            ];
-
-            return response()->json($data);
+            return  view('components.comments',compact('comment'));
         } catch (\Exception $e) {
 
         }
@@ -60,12 +53,5 @@ class CommentController extends Controller
         }
         
         return redirect(route('post.show',['post_id' => $post_id]));
-    }
-
-    //投稿詳細に表示するコメントを取得
-    public function getComment(Request $request) {
-        $comments = Comment::with(['likes','user'])->where('post_id',$request->post_id)->get()->toArray();
-
-        return response()->json($comments);
     }
 }

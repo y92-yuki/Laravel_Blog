@@ -101,6 +101,9 @@
                 <button type="submit"class="btn btn-primary mb-5">コメントする</button>
             </form>
             <div class="viewComments"></div>
+            @foreach ($comments as $comment)
+                @include('components.comments', ['comment', $comment])
+            @endforeach
         </div>
     </div>
 @endsection
