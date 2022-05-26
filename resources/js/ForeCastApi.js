@@ -2,7 +2,18 @@
 
 window.addEventListener('DOMContentLoaded',() => {
 
-    fetch ('/getForeCast')
+    const prefInfo = document.querySelector('#weatherInfo').dataset;
+    const data = {
+        prefOffice: prefInfo.prefoffice,
+        pref: prefInfo.pref
+    }
+    fetch ('api/getForeCast',{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json;"
+        },
+        body: JSON.stringify(data)
+    })
     .then (res => res.text())
     .then(res => document.querySelector('#weatherInfo').insertAdjacentHTML('afterbegin',res))
     .catch(e => {

@@ -10,7 +10,7 @@
             <button type="submit" class="btn btn-success">検索</button>
         </div>
     </form>
-    <div id="weatherInfo">
+    <div id="weatherInfo" data-pref="{{ $pref }}" data-prefoffice="{{ $prefOffice }}">
         
     </div>
     <h2 class="text-center">投稿一覧</h2>

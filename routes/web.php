@@ -101,6 +101,3 @@ Route::get('email/{token}','UserController@updateEmail');
 Route::get('password/{token}','UserController@updatePassword');
 
 });
-
-//APIデータを取得
-Route::post('getForeCast','ForecastApiController@getForeCastApi');
