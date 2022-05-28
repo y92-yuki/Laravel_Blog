@@ -13,6 +13,6 @@ class Prefecture extends Model
     }
 
     public function prefUsers() {
-        return $this->hasMany('App\User','prefecture_id');
+        return $this->hasMany('App\Models\User','prefecture_id');
     }
 }

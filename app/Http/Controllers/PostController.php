@@ -19,8 +19,8 @@ class PostController extends Controller
         $user = Auth::user();
         //ユーザーの居住地を取得
         $pref = $user->prefInfo->pref;
-        $prefOffice = $user->prefInfo->prefOffice;
-        $param = ['pref' => $pref,'prefOffice' => $prefOffice];
+        $pref_office = $user->prefInfo->prefOffice;
+        $param = ['pref' => $pref,'pref_office' => $pref_office];
 
         //検索されていなければ全投稿を取得
         if (empty($request->search_value)) {

@@ -4,7 +4,7 @@ window.addEventListener('DOMContentLoaded',() => {
 
     const prefInfo = document.querySelector('#weatherInfo').dataset;
     const data = {
-        prefOffice: prefInfo.prefoffice,
+        pref_office: prefInfo.pref_office,
         pref: prefInfo.pref
     }
     fetch ('api/getForeCast',{

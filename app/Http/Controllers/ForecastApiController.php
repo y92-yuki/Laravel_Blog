@@ -11,7 +11,7 @@ class ForecastApiController extends Controller
     public function getForeCastApi(Request $request) {
         
         //ユーザーの登録した都道府県(県庁所在地)から現在の天気情報を取得してviewを返却(App\Services\Forecast)
-        $weather = new Forecast($request->prefOffice);
+        $weather = new Forecast($request->pref_office);
         $forecasts = $weather->getForecast();
         $week = ['日','月','火','水','木','金','土'];
         $forecast = [
