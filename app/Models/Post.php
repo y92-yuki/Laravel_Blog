@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -60,19 +60,19 @@ class Post extends Model
     }
 
     public function user() {
-        return $this->BelongsTo('App\User');
+        return $this->BelongsTo('App\Models\User');
     }
 
     public function comments() {
-        return $this->hasMany('App\Comment');
+        return $this->hasMany('App\Models\Comment');
     }
 
     public function users() {
-        return $this->belongsToMany('App\user')->withTimestamps();
+        return $this->belongsToMany('App\Models\user')->withTimestamps();
     }
 
     public function images() {
-        return $this->hasMany('App\Image');
+        return $this->hasMany('App\Models\Image');
     }
 
 }

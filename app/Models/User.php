@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -38,23 +38,23 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
     
     public function posts() {
-        return $this->hasMany('App\Post');
+        return $this->hasMany('App\Models\Post');
     }
 
     public function comments() {
-        return $this->hasMany('App\Comment');
+        return $this->hasMany('App\Models\Comment');
     }
 
     public function commentLikes() {
-        return $this->belongsToMany('App\Comment')->withTimestamps();
+        return $this->belongsToMany('App\Models\Comment')->withTimestamps();
     }
 
     public function postLikes() {
-        return $this->belongsToMany('App\Post')->withTimestamps();
+        return $this->belongsToMany('App\Models\Post')->withTimestamps();
     }
 
     public function prefInfo() {
-        return $this->belongsTo('App\Prefecture','prefecture_id');
+        return $this->belongsTo('App\Models\Prefecture','prefecture_id');
     }
 
 }
