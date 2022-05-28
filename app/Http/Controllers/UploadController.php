@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Image as Upload;
+use App\Models\Image as Upload;
 use Illuminate\Support\Facades\Auth;
-use App\Post;
+use App\Models\Post;
 use Illuminate\Support\Facades\Storage;
 use App\Services\RegisterImage;
 use Illuminate\Support\Facades\DB;
 
 class UploadController extends Controller
 {
-    public function store(Request $request) {    
+    public function store(Request $request) {
         $post_id = $request->post_id;
 
         try {

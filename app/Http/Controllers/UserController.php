@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ChangeEmailRequest;
 use Illuminate\Http\Request;
-use App\User;
-use App\Reset;
+use App\Models\User;
+use App\Models\Reset;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Mail\SendEmailReset;
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Mail;
 use App\Http\Requests\ChangePrefectureRequest;
 use App\Mail\SendPasswordReset;
-use App\Prefecture;
+use App\Models\Prefecture;
 use Carbon\Carbon;
 use Exception;
 

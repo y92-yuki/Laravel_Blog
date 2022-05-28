@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Post;
-use App\Comment;
+use App\Models\Post;
+use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PostRequest;
-use App\Image as Upload;
+use App\Models\Image as Upload;
 use Illuminate\Support\Facades\Storage;
 use App\Services\RegisterImage;
 use Illuminate\Support\Facades\DB;
@@ -56,6 +56,7 @@ class PostController extends Controller
             //投稿に画像が存在するか判定
             if ($request->file) {
                 $file_name = $request->file->getClientOriginalName();
+                
                 //画像を保存するためのパスを作成
                 $registerimage = new RegisterImage($file_name, Auth::id());
 
@@ -130,11 +131,12 @@ class PostController extends Controller
 
     //投稿削除処理
     public function delete(Request $request) {
-        //削除する投稿とリレーションされているコメントと画像を取得
-        $post = Post::with(['comment','images'])->find($request->id);
-
         try {
             DB::beginTransaction();
+
+            //削除する投稿とリレーションされているコメントと画像を取得
+            $post = Post::with(['comment','images'])->find($request->id);
+
             //投稿に対するコメントのいいねを削除
             foreach ($post->comments as $comment) {
                 $comment->likes()->detach();

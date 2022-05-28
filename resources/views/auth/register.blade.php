@@ -44,7 +44,7 @@
                             <div class="col-md-6">
                                 <select name="pref" class="form-control @error('pref') is-invalid @enderror">
                                     <option value="0">選択してください</option>
-                                    @foreach(App\Prefecture::getPrefs() as $prefs)
+                                    @foreach(App\Models\Prefecture::getPrefs() as $prefs)
                                         <option value="{{ $prefs->id }}" @if($prefs->id == old('pref')) selected @endif>{{ $prefs->pref }}</option>
                                     @endforeach
                                 </select> 
