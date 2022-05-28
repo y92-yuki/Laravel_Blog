@@ -16,7 +16,7 @@ class Comment extends Model
 
 
     //ユーザーがしたコメント一覧をマイページに表示
-    public function getCommentPostuserAttribute() {
+    public function getComment() {
         //マイページの「コメントした投稿一覧」に表示するデータ
         $comments = [$this->post->title,$this->post->user->name,$this->message];
         

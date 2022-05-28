@@ -26,8 +26,8 @@
                     </thead>
                 @endif
                 <tr>
-                    <td style="width: 30%;">{{ $post->index_post['id'] }} . {{ $post->index_post['title'] }}({{ $post->index_post['userName'] }})</td>
-                    <td class="text-center" style="width: 30%;">{{ $post->IndexPost['message'] }}</td>
+                    <td style="width: 30%;">{{ $post->getIndexPost()['id'] }} . {{ $post->getIndexPost()['title'] }}({{ $post->getIndexPost()['user_name'] }})</td>
+                    <td class="text-center" style="width: 30%;">{{ $post->getIndexPost()['message'] }}</td>
                     <td><a href="{{ route('post.show', ['post_id' => $post->id]) }}" class="btn btn-sm btn-primary">詳細</a></td>
                 </tr>
             </table>

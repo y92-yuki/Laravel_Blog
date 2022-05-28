@@ -15,7 +15,7 @@ class Post extends Model
     protected $guarded = ['id'];
     protected $softCascade = ['comment'];
 
-    public function getIndexPostAttribute() {
+    public function getIndexPost() {
         //indexの投稿一覧に表示するデータ
         $id = $this->id;
         $title = $this->title;
@@ -31,14 +31,14 @@ class Post extends Model
             'id' => $id,
             'title' => $modifiedTitle,
             'message' => $modifiedMessage,
-            'userName' => $userName
+            'user_name' => $userName
         ];
 
         return $modifiedPosts;
     }
 
     //ユーザーの投稿一覧
-    public function getIdTitleAttribute() {
+    public function getIdTitle() {
         //マイページの投稿一覧に表示するデータ
         $id = $this->id;
         $title = $this->title;

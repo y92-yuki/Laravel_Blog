@@ -24,7 +24,7 @@
                 <div class="card-text">
                     <ul>
                         @forelse ($user['posts'] as $post)
-                            <li>{{ $post->IdTitle['id'] }}.<a href="{{ route('post.show',['post_id' => $post->id]) }}">{{ $post->IdTitle['title'] }}</a> (いいね:{{ $post->users->count() }})</li>
+                            <li>{{ $post->getIdTitle()['id'] }}.<a href="{{ route('post.show',['post_id' => $post->id]) }}">{{ $post->getIdTitle()['title'] }}</a> (いいね:{{ $post->users->count() }})</li>
                         @empty
                             <h5>まだ投稿がありません</h5>
                         @endforelse
@@ -39,8 +39,8 @@
                 <div class="card-text">
                     <ul>
                         @forelse ($user->comments as $comment)
-                            <li><a href="{{ route('post.show',['post_id' => $comment->post_id]) }}">{{ $comment->CommentPostuser['title'] }}</a>
-                                 [ {{ $comment->CommentPostuser['postUserName'] }} => {{ $comment->CommentPostuser['message'] }} ](いいね:{{ $comment->likes->count() }})</li>
+                            <li><a href="{{ route('post.show',['post_id' => $comment->post_id]) }}">{{ $comment->getComment()['title'] }}</a>
+                                 [ {{ $comment->getComment()['postUserName'] }} => {{ $comment->getComment()['message'] }} ](いいね:{{ $comment->likes->count() }})</li>
                         @empty
                             <h5>まだコメントしていません</h5>
                         @endforelse
