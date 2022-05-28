@@ -28,12 +28,14 @@ class PrefectureTableSeeder extends Seeder
         $prefectures = array_combine($prefs,$prefOffices);
 
         foreach ($prefectures as $pref => $prefOffice) {
-            DB::table('prefectures')->insert([
-                'pref' => $pref,
-                'prefOffice' => $prefOffice,
-                'created_at' => new DateTime(),
-                'updated_at' => new DateTime()
-            ]);
+            $params[] = [
+            'pref' => $pref,
+            'prefOffice' => $prefOffice,
+            'created_at' => new DateTime(),
+            'updated_at' => new DateTime()
+            ];
         }
+
+        DB::table('prefectures')->insert($params);
     }
 }
