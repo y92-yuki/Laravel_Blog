@@ -33,20 +33,22 @@ class Comment extends Model
         return $modifiedComments;
     }
 
-    //投稿にいいね済みか判定
+    //コメントにいいねされているか判定
     public function getIsLikeByLoginUserAttribute() {
         return $this->likes()->where('user_id',Auth::id())->exists();
     }
     
+    //コメント投稿者情報
     public function user() {
         return $this->belongsTo('App\Models\User');
     }
 
+    //コメントした投稿の情報
     public function post() {
         return $this->belongsTo('App\Models\Post');
     }
 
-    //コメントへのいいね用中間テーブル
+    //コメントに対するいいね用中間テーブル
     public function likes() {
         return $this->belongsToMany('App\Models\User')->withTimestamps();
     }

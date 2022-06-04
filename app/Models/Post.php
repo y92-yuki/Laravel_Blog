@@ -13,7 +13,7 @@ class Post extends Model
     use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
 
     protected $guarded = ['id'];
-    protected $softCascade = ['comment'];
+    protected $softCascade = ['comments'];
 
     public function getIndexPost() {
         //indexの投稿一覧に表示するデータ
@@ -55,22 +55,27 @@ class Post extends Model
         return $modifiedPosts;
     }
 
+    //投稿にいいねされているか判定
     public function postExistsLike() {
         return $this->users()->where('user_id',Auth::id())->exists();
     }
 
+    //投稿者情報
     public function user() {
         return $this->BelongsTo('App\Models\User');
     }
 
+    //投稿に対するコメント情報
     public function comments() {
         return $this->hasMany('App\Models\Comment');
     }
 
+    //投稿に対するいいね用の中間テーブル
     public function users() {
-        return $this->belongsToMany('App\Models\user')->withTimestamps();
+        return $this->belongsToMany('App\Models\User')->withTimestamps();
     }
 
+    //投稿に添付されている画像
     public function images() {
         return $this->hasMany('App\Models\Image');
     }

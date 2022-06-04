@@ -18,24 +18,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Auth::routes();
 Auth::routes(['verify' => true]);
 
-// Route::get('/home', 'HomeController@index')->name('home');
-// Route::fallback(function() {
-//     return redirect('/');
-// });
-
-Route::prefix('post')->group(function() {
+Route::group(['prefix' => 'post', 'middleware' => ['verified']] ,function() {
     //投稿一覧画面
-    Route::get('','PostController@index')->name('post')->middleware(['verified']);
+    Route::get('','PostController@index')->name('post');
 
     //新規投稿画面
-    Route::get('/create','PostController@create')->name('post.create')->middleware('auth');
+    Route::get('/create','PostController@create')->name('post.create');
     Route::post('/create','PostController@store');
 
     //投稿詳細画面
-    Route::get('/show/{post_id}','PostController@show')->name('post.show')->middleware('auth');
+    Route::get('/show/{post_id}','PostController@show')->name('post.show');
 
     //コメント投稿
     Route::post('/show','CommentController@addComment');
@@ -44,15 +38,15 @@ Route::prefix('post')->group(function() {
     Route::get('/show/getcomment/{post_id}','CommentController@getComment');
 
     //投稿編集画面
-    Route::get('/edit/{post}','PostController@edit')->name('post.edit')->middleware('auth');
+    Route::get('/edit/{post}','PostController@edit')->name('post.edit');
     Route::post('/edit','PostController@update');
 
     //投稿削除画面
-    Route::get('/delete/{post}','PostController@deleteConfirm')->name('post.deleteConfirm')->middleware('auth');
+    Route::get('/delete/{post}','PostController@deleteConfirm')->name('post.deleteConfirm');
     Route::post('/delete','PostController@delete');
 
     //コメント削除画面
-    Route::get('/show/delete/{comment}','CommentController@delete')->name('show.delete')->middleware('auth');
+    Route::get('/show/delete/{comment}','CommentController@delete')->name('show.delete');
     Route::post('/show/delete','CommentController@remove');
 
     //コメントへのいいね機能
@@ -65,7 +59,7 @@ Route::prefix('post')->group(function() {
 
 });
 
-Route::prefix('upload')->group(function() {
+Route::group(['prefix' => 'upload'] ,function() {
     //投稿詳細画面から画像投稿機能
     Route::post('','UploadController@store')->name('upload');
 
@@ -75,16 +69,16 @@ Route::prefix('upload')->group(function() {
 
 });
 
-Route::prefix('mypage')->group(function() {
+Route::group(['prefix' => 'mypage', 'middleware' => ['verified']] ,function() {
     //マイページ
-    Route::get('','UserController@info')->name('myPage')->middleware('auth');
+    Route::get('','UserController@info')->name('myPage');
 
     //パスワード変更
-    Route::get('/{user}/editpassword','UserController@editPassword')->name('edit.password')->middleware('auth');
+    Route::get('/{user}/editpassword','UserController@editPassword')->name('edit.password');
     Route::post('/{user}/sendpasswordlink','UserController@sendChangePasswordLink')->name('send.password');
 
     //メールアドレス変更
-    Route::get('/{user}/editemail','UserController@editEmail')->name('edit.email')->middleware('auth');
+    Route::get('/{user}/editemail','UserController@editEmail')->name('edit.email');
     Route::post('/editemail/sendemaillink','UserController@sendChangeEmailLink')->name('send.email');
 
     //地域変更
@@ -99,5 +93,7 @@ Route::get('email/{token}','UserController@updateEmail');
 
 //パスワードリセットのトークン確認
 Route::get('password/{token}','UserController@updatePassword');
-
 });
+
+//ゲストユーザーでログイン
+Route::get('guest','Auth\LoginController@guestLogin')->name('guest');

@@ -135,7 +135,7 @@ class PostController extends Controller
             DB::beginTransaction();
 
             //削除する投稿とリレーションされているコメントと画像を取得
-            $post = Post::with(['comment','images'])->find($request->id);
+            $post = Post::with(['comments','images'])->find($request->id);
 
             //投稿に対するコメントのいいねを削除
             foreach ($post->comments as $comment) {
@@ -150,7 +150,7 @@ class PostController extends Controller
                 $image->delete();
                 Storage::disk('public')->delete($remove_image);
             }
-            //投稿の画像パスを削除
+            //投稿を削除
             $post->delete();
 
             session()->flash('success_message','投稿の削除が完了しました');
@@ -159,6 +159,7 @@ class PostController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error_message','投稿の削除に失敗しました');
+            dd($e->getMessage());
         }
 
         return redirect('/post');

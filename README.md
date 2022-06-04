@@ -4,7 +4,8 @@
 ![gif](https://user-images.githubusercontent.com/69518643/170853857-e4849812-6744-4534-a025-4a2719637f83.gif)
 
 ## URL  
-[準備中です](https://www.google.com)  
+https://y-portfolio.net  
+※ゲストユーザーでお試しください
 
 # 使用技術
 - MAMP
@@ -13,8 +14,9 @@
     - Apache
 - Laravel 6.20.44
 - OpenWeatherMap
+- Amazon Lightsail
 
-## ライブラリ
+# ライブラリ
 - laravel-soft-cascade
 - Intervention Image
 - Guzzle
