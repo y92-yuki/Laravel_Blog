@@ -29,6 +29,13 @@ const addComment = (formData,message) => {
     })
     .then(res => res.text())
     .then(res => {
+
+        //CommentController.phpで例外が発生した場合はnullが戻り値
+        if (!res) {
+            return Promise.reject('error is CommentController.php');
+        }
+        
+        //テキストエリアを初期化
         message.value = '';
 
         //コメント投稿後にバリデーションメッセージを削除
@@ -45,6 +52,7 @@ const addComment = (formData,message) => {
         //新規投稿したコメントを挿入
         document.querySelector('.viewComments').insertAdjacentHTML('afterbegin',res)
     })
+
     //コメントの取消ボタンを非表示
     .then(() => document.querySelector('button.commentUnlike').classList.add('d-none'))
     .catch(e => {
@@ -64,22 +72,27 @@ const addValidateMessage = (message,messagePosition,messageType = null) => {
 
 window.addEventListener('DOMContentLoaded',() => {
 
-    //コメントの新規投稿処理
-    document.querySelector('#commentSubmit').onsubmit = (e) => {
-        e.preventDefault();
-        const formData = new FormData(document.forms.commentSubmit);
-        const message = document.querySelector('textarea[name=message]');
+    //ユーザーがログインしているかおよびログイン中のユーザーが投稿にいいね済か取得
+    const postExistsLike = document.querySelector('.postExistsLike');
 
-        if (!message.value) {
-            if (!document.querySelector('.blankMessage')) {
-                addValidateMessage('*コメントを入力してください',message,'blankMessage');
+    if (postExistsLike.dataset.not_logged_in != 'not_logged_in') {
+        //コメントの新規投稿処理
+        document.querySelector('#commentSubmit').onsubmit = (e) => {
+            e.preventDefault();
+            const formData = new FormData(document.forms.commentSubmit);
+            const message = document.querySelector('textarea[name=message]');
+
+            if (!message.value) {
+                if (!document.querySelector('.blankMessage')) {
+                    addValidateMessage('*コメントを入力してください',message,'blankMessage');
+                }
+            } else if (message.value.length >= 20) {
+                if (!document.querySelector('.max20Message')) {
+                    addValidateMessage('*コメントは20文字以内で入力してください',message,'max20Message');
+                }
+            } else {
+                addComment(formData,message);
             }
-        } else if (message.value.length >= 20) {
-            if (!document.querySelector('.max20Message')) {
-                addValidateMessage('*コメントは20文字以内で入力してください',message,'max20Message');
-            }
-        } else {
-            addComment(formData,message);
         }
     }
 });

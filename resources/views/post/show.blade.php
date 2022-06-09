@@ -20,13 +20,17 @@
         <a href="/post" class="btn btn-success">戻る</a>
 
         {{-- 投稿へのいいね --}}
-        <input type="hidden" name="postExistsLike" value="{{ $post->postExistsLike() }}">
-        <div class="text-right postUnlike">
-            <button type="button" class="btn btn-success postLike-toggle" value="{{ $post->id }}">取消</button>
-        </div>
-        <div class="text-right postLike">
-            <button type="button" class="btn btn-primary postLike-toggle" value="{{ $post->id }}"><i class="fa-regular fas fa-lg fa-thumbs-up"></i> いいね!</button>
-        </div>
+        @if (Auth::check())
+            <input type="hidden" class="postExistsLike" value="{{ $post->postExistsLike() }}">
+            <div class="text-right postUnlike">
+                <button type="button" class="btn btn-success postLike-toggle" value="{{ $post->id }}">取消</button>
+            </div>
+            <div class="text-right postLike">
+                <button type="button" class="btn btn-primary postLike-toggle" value="{{ $post->id }}"><i class="fa-regular fas fa-lg fa-thumbs-up"></i> いいね!</button>
+            </div>
+        @else
+            <div class="postExistsLike" data-not_logged_in="not_logged_in"></div>
+        @endif
 
         @if ($post->user_id == Auth::id())
             <form action="{{ route('upload',['post_id' => $post->id]) }}" method="post" enctype="multipart/form-data">
@@ -77,34 +81,35 @@
             </div>
         </div>
         
-            
-
         @foreach ($post->images as $image)
             <img src="{{ asset('storage/' . $post->user_id . '/' .$image->path) }}" class="mb-2">
         @endforeach
 
-        <h4 class="my-5">コメントを残す</h4>
-        <div class="col-5" id="commentArea">
+        @if (Auth::check())
+            <h4 class="my-5">コメントを残す</h4>
             <div class="alert alert-success text-center" style="display: none">
                 コメントの投稿が完了しました
             </div>
             <div class="alert alert-danger text-center" style="display: none">
                 コメントの投稿に失敗しました
             </div>
-            <form action="/post/show" method="post" id="commentSubmit" >
+            <form action="/post/show" method="post" id="commentSubmit" class="col-5">
                 @csrf
                 <input type="hidden" name="user_id" value="{{Auth::id()}}">
                 <input type="hidden" name="post_id" value="{{$post->id}}">
                 <div class="form-group">
-                    <textarea name="message" class="form-control" placeholder="コメントは20文字以内で入力してください"></textarea>
+                    <textarea name="message" class="form-control" rows="3" placeholder="コメントは20文字以内で入力してください"></textarea>
                 </div>
                 <button type="submit"class="btn btn-primary mb-5">コメントする</button>
             </form>
-            <div class="viewComments"></div>
-            @foreach ($comments as $comment)
-                @include('components.comments', ['comment', $comment])
-            @endforeach
-        </div>
+        @endif
+        <div class="viewComments"></div>
+        @foreach ($comments as $comment)
+            @if ($comment['user_id'] != Auth::id())
+                <input type="hidden" name="not_delete" value="not_delete">
+            @endif
+            @include('components.comments', ['comment', $comment])
+        @endforeach
     </div>
 @endsection
 

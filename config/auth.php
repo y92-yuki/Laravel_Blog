@@ -113,10 +113,4 @@ return [
     */
 
     'password_timeout' => 10800,
-
-    /*
-    ゲストユーザーのIDとパスワード
-    */
-    'guest_user_id' => env('GUEST_USER_ID'),
-    'guest_user_password' => env('GUEST_USER_PASSWORD'),
 ];

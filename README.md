@@ -1,11 +1,12 @@
 # ひと言掲示板  
-掲示板です。投稿に画像を添付することができます。
+掲示板です。投稿に画像を添付することができます。  
+ユーザーが登録した地域の天気情報を表示します。
 
 ![gif](https://user-images.githubusercontent.com/69518643/170853857-e4849812-6744-4534-a025-4a2719637f83.gif)
 
 ## URL  
 https://y-portfolio.net  
-※ゲストユーザーでお試しください
+※会員登録せずにご利用いただく場合は投稿一覧・詳細画面の閲覧のみ可能です
 
 # 使用技術
 - MAMP
@@ -14,7 +15,7 @@ https://y-portfolio.net
     - Apache
 - Laravel 6.20.44
 - OpenWeatherMap
-- Amazon Lightsail
+- AWS Amazon Lightsail
 
 # ライブラリ
 - laravel-soft-cascade

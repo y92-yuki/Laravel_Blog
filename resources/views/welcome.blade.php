@@ -93,9 +93,9 @@
                 </div>
 
                 <div class="links">
-                    <a href="{{route('login')}}">ログインはこちら</a>
-                    <a href="{{route('register')}}">新規登録はこちら</a>
-                    <a href="{{ route('guest') }}" id="guest">ゲストログインはこちら</a>
+                    <a href="{{ route('post') }}">登録せずに利用</a>
+                    <a href="{{ route('login') }}">ログインはこちら</a>
+                    <a href="{{ route('register') }}">新規登録はこちら</a>
                 </div>
             </div>
         </div>

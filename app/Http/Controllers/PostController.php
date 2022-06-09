@@ -17,24 +17,29 @@ class PostController extends Controller
     //ログイン直後の投稿一覧表示
     public function index(Request $request) {
         $user = Auth::user();
-        //ユーザーの居住地を取得
-        $pref = $user->prefInfo->pref;
-        $pref_office = $user->prefInfo->prefOffice;
-        $param = ['pref' => $pref,'pref_office' => $pref_office];
+
+        if ($user) {
+            //ユーザーの居住地を取得
+            $pref = $user->prefInfo->pref;
+            $pref_office = $user->prefInfo->prefOffice;
+            $param = ['pref' => $pref,'pref_office' => $pref_office];   
+        } else {
+            $param = ['pref' => '','pref_office' => ''];
+        }
 
         //検索されていなければ全投稿を取得
         if (empty($request->search_value)) {
             $posts = Post::orderBy('id','desc')->paginate(5);
             $param += ['posts' => $posts,'search' => false];
-            return view('post.index',$param);
 
         //検索窓で指定された値を取得
         } else {
             $search = $request->search_value;
             $posts = Post::where('title','like',"%{$search}%")->orWhere('message','like',"%{$search}%")->orderBy('id','desc')->paginate(5);
             $param += ['posts' => $posts,'search' => $search];
-            return view('post.index',$param);
         }
+
+        return view('post.index',$param);
     }
 
     //新規投稿画面
@@ -159,7 +164,6 @@ class PostController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error_message','投稿の削除に失敗しました');
-            dd($e->getMessage());
         }
 
         return redirect('/post');

@@ -20,16 +20,20 @@ Route::get('/', function () {
 
 Auth::routes(['verify' => true]);
 
-Route::group(['prefix' => 'post', 'middleware' => ['verified']] ,function() {
+
+Route::group(['prefix' => 'post'], function() {
     //投稿一覧画面
     Route::get('','PostController@index')->name('post');
+
+    //投稿詳細画面
+    Route::get('/show/{post_id}','PostController@show')->name('post.show');
+});
+
+Route::group(['prefix' => 'post', 'middleware' => ['verified']] ,function() {
 
     //新規投稿画面
     Route::get('/create','PostController@create')->name('post.create');
     Route::post('/create','PostController@store');
-
-    //投稿詳細画面
-    Route::get('/show/{post_id}','PostController@show')->name('post.show');
 
     //コメント投稿
     Route::post('/show','CommentController@addComment');
@@ -94,6 +98,3 @@ Route::get('email/{token}','UserController@updateEmail');
 //パスワードリセットのトークン確認
 Route::get('password/{token}','UserController@updatePassword');
 });
-
-//ゲストユーザーでログイン
-Route::get('guest','Auth\LoginController@guestLogin')->name('guest');

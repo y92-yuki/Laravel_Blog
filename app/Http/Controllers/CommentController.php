@@ -19,7 +19,7 @@ class CommentController extends Controller
 
             return  view('components.comments',compact('comment'));
         } catch (\Exception $e) {
-
+            return null;
         }
     }
 

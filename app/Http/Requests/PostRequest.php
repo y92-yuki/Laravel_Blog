@@ -14,14 +14,6 @@ class PostRequest extends FormRequest
     public function authorize()
     {
         return true;
-
-        // if ($this->path() == 'post/add') {
-        //     return true;
-        // } elseif ($this->path() == 'post/edit') {
-        //     return true;
-        // }else {
-        //     return false;
-        // }
     }
 
     /**

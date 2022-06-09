@@ -29,10 +29,7 @@ class UserController extends Controller
 
     //ログイン中のパスワード変更画面
     public function editPassword(User $user) {
-        if ($user->id == config('auth.guest_user_id')) {
-            session()->flash('error_message','ゲストアカウントでパスワードの変更はできません');
-            return redirect(route('myPage'));
-        }elseif ($user->id == Auth::id()) {
+        if ($user->id == Auth::id()) {
             return view('user.editPassword',compact('user'));
         } else {
             return redirect(route('myPage'));
@@ -109,10 +106,7 @@ class UserController extends Controller
 
 
     public function editEmail(User $user) {
-        if ($user->id == config('auth.guest_user_id')) {
-            session()->flash('error_message','ゲストアカウントでメールアドレスの変更はできません');
-            return redirect(route('myPage'));
-        } elseif ($user->id == Auth::id()) {
+        if ($user->id == Auth::id()) {
             return view('user.editEmail',compact('user'));
         } else {
             return redirect(route('myPage'));
@@ -189,10 +183,7 @@ class UserController extends Controller
     public function editPrefectures(User $user) {
         $prefs = Prefecture::all();
 
-        if ($user->id == config('auth.guest_user_id')) {
-            session()->flash('error_message','ゲストアカウントで地域の変更はできません');
-            return redirect(route('myPage'));
-        } elseif ($user->id == Auth::id()) {
+        if ($user->id == Auth::id()) {
             return view('user.editPrefectures',compact('prefs','user'));
         } else {
             return redirect(route('myPage'));
