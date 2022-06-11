@@ -18,27 +18,32 @@ class PostController extends Controller
     public function index(Request $request) {
         $user = Auth::user();
 
+        //ログインしていればユーザーの登録地域を取得
         if ($user) {
-            //ユーザーの居住地を取得
-            $pref = $user->prefInfo->pref;
-            $pref_office = $user->prefInfo->prefOffice;
-            $param = ['pref' => $pref,'pref_office' => $pref_office];   
+            $param = [
+                'pref' => $user->prefInfo->pref,
+                'pref_office' => $user->prefInfo->prefOffice
+            ];   
         } else {
-            $param = ['pref' => '','pref_office' => ''];
+            $param = [
+                'pref' => '',
+                'pref_office' => ''
+            ];
         }
 
         //検索されていなければ全投稿を取得
         if (empty($request->search_value)) {
             $posts = Post::orderBy('id','desc')->paginate(5);
-            $param += ['posts' => $posts,'search' => false];
+            $param += ['search' => false];
 
         //検索窓で指定された値を取得
         } else {
             $search = $request->search_value;
             $posts = Post::where('title','like',"%{$search}%")->orWhere('message','like',"%{$search}%")->orderBy('id','desc')->paginate(5);
-            $param += ['posts' => $posts,'search' => $search];
-        }
+            $param += ['search' => $search];
 
+        }
+        $param += ['posts' => $posts];
         return view('post.index',$param);
     }
 
