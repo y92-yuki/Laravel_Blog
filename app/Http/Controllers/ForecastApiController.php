@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\Forecast;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ForecastApiController extends Controller
 {
@@ -28,6 +29,7 @@ class ForecastApiController extends Controller
 
             return view('components.forecast',compact('forecast'));
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return null;
         }
     }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Exception;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 
 class Forecast {
     protected $api_key;
@@ -39,7 +40,10 @@ class Forecast {
                 'long' => $location[0]['lon'],
             ];
         } catch (Exception $e) {
-            return json_encode($e->getMessage());
+            return Log::error([
+                'error_message' => $e->getMessage(),
+                'Forecast.php' => 'getGeocoding'
+            ]);
         }
     }
 
@@ -52,7 +56,10 @@ class Forecast {
             
             return json_decode($response->getBody(),true);
         } catch(Exception $e) {
-            return json_encode($e->getMessage());
+            return Log::error([
+                'error_message' => $e->getMessage(),
+                'Forecast.php' => 'getForecast'
+            ]);
         }
     }
 }

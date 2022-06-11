@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 
 class CommentController extends Controller
@@ -19,6 +20,7 @@ class CommentController extends Controller
 
             return  view('components.comments',compact('comment'));
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
             return null;
         }
     }
