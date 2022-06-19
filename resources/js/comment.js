@@ -81,8 +81,7 @@ window.addEventListener('DOMContentLoaded',() => {
             e.preventDefault();
             const formData = new FormData(document.forms.commentSubmit);
             const message = document.querySelector('textarea[name=message]');
-
-            if (!message.value) {
+            if (!message.value.trim()) {
                 if (!document.querySelector('.blankMessage')) {
                     addValidateMessage('*コメントを入力してください',message,'blankMessage');
                 }
