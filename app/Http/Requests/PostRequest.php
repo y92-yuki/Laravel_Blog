@@ -25,10 +25,18 @@ class PostRequest extends FormRequest
     {
         return [
             'title' => 'required|max:20',
-            'message' => 'required',
+            'message' => 'required|string',
         ];
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'title' => preg_replace('/\A[\x00\s]++|[\x00\s]++\z/u', '', $this->title),
+            'message' => preg_replace('/\A[\x00\s]++|[\x00\s]++\z/u', '', $this->message),
+        ]);
+    }
+    
     public function messages()
     {
         return [
